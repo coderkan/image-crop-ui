@@ -20,11 +20,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        loadElements();
+
+    }
+
+    private void loadElements()
+    {
         ((ImageView)findViewById(R.id.backgroundIconChange)).setOnClickListener(this);
-
-
-
-
+        ((ImageView)findViewById(R.id.cubeBackgroundChange)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.frontImView)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.backImView)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.leftImView)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.rightImView)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.topImView)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.bottomImView)).setOnClickListener(this);
+        ((ImageView)findViewById(R.id.backgroundImView)).setOnClickListener(this);
 
 
     }
@@ -58,6 +69,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.backgroundIconChange:
                 Intent intent = new Intent(this, ChangeBackground.class);
                 startActivity(intent);
+                break;
+
+
+            case R.id.cubeBackgroundChange :
+
+                break;
+            case R.id.frontImView :
+
+                break;
+            case R.id.backImView :
+
+                break;
+            case R.id.leftImView :
+
+                break;
+            case R.id.rightImView :
+
+                break;
+            case R.id.topImView :
+
+                break;
+            case R.id.bottomImView :
+
+                break;
+            case R.id.backgroundImView :
+
                 break;
         }
     }

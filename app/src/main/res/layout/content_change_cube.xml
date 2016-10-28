@@ -2,25 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_change_bacground2"
+    android:id="@+id/content_cube_change"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="cheetatech.ucropcustomui.ChangeBackground"
-    android:background="@android:color/darker_gray"
-    tools:showIn="@layout/activity_change_background">
+    tools:context="cheetatech.ucropcustomui.ChangeCube"
+    tools:showIn="@layout/activity_change_cube">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        
+
         <LinearLayout
             android:id="@+id/imageGalleryLayout"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@color/colorPrimary"
+            android:orientation="horizontal"
             >
 
         </LinearLayout>
@@ -101,7 +101,7 @@
         </RelativeLayout>
 
 
-        
+
     </RelativeLayout>
 
 </RelativeLayout>
