@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">ucropcustomui</string>
     <string name="action_settings">Settings</string>
+    <string name="front">FRONT</string>
+    <string name="back">BACK</string>Ü
+    <string name="left">LEFT</string>
+    <string name="right">RIGHT</string>
+    <string name="top">TOP</string>
+    <string name="bottom">BOTTOM</string>
+    <string name="c_cube_im">Change Cube Images</string>
+    <string name="c_back_im">Change Background Images</string>
 </resources>
