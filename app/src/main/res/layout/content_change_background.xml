@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_change_bacground2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="cheetatech.ucropcustomui.ChangeBackground"
+    android:background="@android:color/darker_gray"
+    tools:showIn="@layout/activity_change_background">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <LinearLayout
+            android:id="@+id/imageGalleryLayout"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/colorPrimary"
+            >
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/imageGalleryLayout"
+            android:layout_above="@+id/iconsLayout"
+            android:padding="@dimen/image_padding"
+            android:orientation="horizontal"
+            >
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.6">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/ic_launcher"
+                    android:background="@drawable/border"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.6">
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/iconsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/backgroundLayoutColor"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            >
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/icon_padding"
+                android:visibility="visible"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/ic_background" />
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabGallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_margin="@dimen/fab_margin"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/icon_padding"
+                app:srcCompat="@drawable/ic_cam" />
+
+
+        </RelativeLayout>
+
+
+        
+    </RelativeLayout>
+
+</RelativeLayout>

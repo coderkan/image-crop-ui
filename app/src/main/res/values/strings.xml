@@ -9,4 +9,5 @@
     <string name="bottom">BOTTOM</string>
     <string name="c_cube_im">Change Cube Images</string>
     <string name="c_back_im">Change Background Images</string>
+    <string name="title_activity_change_bacground2">ChangeBacground2</string>
 </resources>
