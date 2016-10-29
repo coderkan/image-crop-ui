@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- When selected, use grey -->
+    <item android:drawable="@drawable/item_pressed"
+        android:state_checked="true" />
+    <!-- When not selected, use white-->
+    <item android:drawable="@drawable/item_nonpressed"
+        android:state_checked="false"/>
+
+    <!--
+    <item
+        android:state_pressed="true"
+        android:drawable="@drawable/item_pressed"
+        />
+    <item
+        android:state_pressed="false"
+        android:drawable="@drawable/item_nonpressed"
+        />
+    <item
+        android:state_enabled="false"
+        android:drawable="@drawable/item_disabled"
+        />
+    -->
+
+</selector>

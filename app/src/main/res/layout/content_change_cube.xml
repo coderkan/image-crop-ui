@@ -116,6 +116,7 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:padding="@dimen/image_padding"
+                android:descendantFocusability="blocksDescendants"
                 >
 
                 <RelativeLayout
@@ -124,12 +125,16 @@
                     android:background="@color/colorPrimary"
                     >
 
-                    <ImageView
+                    <ToggleButton
                         android:id="@+id/frontImView"
+                        android:textOff=""
+                        android:textOn=""
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:layout_width="@dimen/image_square"
                         android:layout_height="@dimen/image_square"
+                        android:background="@drawable/image_selector"
                         android:src="@mipmap/ic_launcher"
-                        android:background="@drawable/border"
                         />
 
                     <LinearLayout
@@ -168,12 +173,12 @@
                     android:background="@color/colorPrimary"
                     >
 
-                    <ImageView
+                    <CheckBox
                         android:id="@+id/backImView"
                         android:layout_width="@dimen/image_square"
                         android:layout_height="@dimen/image_square"
-                        android:src="@mipmap/ic_launcher"
-                        android:background="@drawable/border"
+                        android:checked="false"
+                        android:button="@drawable/image_selector"
                         />
 
                     <LinearLayout

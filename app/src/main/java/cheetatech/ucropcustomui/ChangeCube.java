@@ -1,15 +1,21 @@
 package cheetatech.ucropcustomui;
 
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -21,7 +27,9 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
     private ImageView backgroundImageView = null;
-
+    private ImageView   bottom = null, top = null, right = null, left = null;
+    private ToggleButton front = null;
+    private CheckBox back = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,9 +37,29 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        loadElements();
         loadGallery();
 
+
+    }
+
+    private void loadElements()
+    {
+        front = (ToggleButton) findViewById(R.id.frontImView);
+        back = (CheckBox) findViewById(R.id.backImView);
+        right =(ImageView) findViewById(R.id.rightImView);
+        left = (ImageView) findViewById(R.id.leftImView);
+        top = (ImageView) findViewById(R.id.topImView);
+        bottom = (ImageView) findViewById(R.id.bottomImView);
+
+        front.setOnClickListener(this);
+        back.setOnClickListener(this);
+        right.setOnClickListener(this);
+        left.setOnClickListener(this);
+        top.setOnClickListener(this);
+        bottom.setOnClickListener(this);
+
+        bottom.setSelected(true);
 
     }
 
@@ -75,14 +103,28 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
 
 
-        //Toast.makeText(this, "IndexXXXXX ", Toast.LENGTH_SHORT).show();
+        
         switch (view.getId())
         {
+            case R.id.frontImView:
 
+
+                break;
+            case R.id.backImView:
+                break;
+            case R.id.topImView:
+                break;
+            case R.id.rightImView:
+                break;
+            case R.id.leftImView:
+                break;
+            case R.id.bottomImView:
+                break;
         }
 
         for(int i=0; i<idList.size(); i++) {
