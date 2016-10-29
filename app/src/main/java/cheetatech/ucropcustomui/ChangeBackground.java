@@ -71,10 +71,8 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
     {
         ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
         ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
-        //((ImageView)findViewById(R.id.backgroundImView)).setOnClickListener(this);
         backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        //backgroundImageView.setOnClickListener(this);
     }
 
 

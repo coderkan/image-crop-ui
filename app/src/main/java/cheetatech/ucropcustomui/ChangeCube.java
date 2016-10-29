@@ -20,6 +20,7 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
+    private ImageView backgroundImageView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,10 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
     private void loadGallery()
     {
+
+        backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
+        backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
         int[] images = new int[]{
                 R.drawable.im1,
                 R.drawable.im2 ,
@@ -75,16 +80,18 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
 
         //Toast.makeText(this, "IndexXXXXX ", Toast.LENGTH_SHORT).show();
-
-        for(int i=0; i<idList.size(); i++) {
-            if(view.getId() == idList.get(i)) {
-                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
-            }
-        }
-
         switch (view.getId())
         {
 
         }
+
+        for(int i=0; i<idList.size(); i++) {
+            if(view.getId() == idList.get(i)) {
+                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
+                backgroundImageView.setImageBitmap(controller.getBitmap(i));
+            }
+        }
+
+
     }
 }
