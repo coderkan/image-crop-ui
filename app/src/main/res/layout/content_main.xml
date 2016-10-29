@@ -47,7 +47,7 @@
                     android:id="@+id/changeBackgroundText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/c_cube_im"
+                    android:text="@string/c_back_im"
                     android:layout_toRightOf="@id/backgroundIcon"
                     android:layout_marginLeft="@dimen/image_padding"
                     android:textColor="@color/imagetextColor"

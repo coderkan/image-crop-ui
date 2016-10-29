@@ -6,12 +6,20 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
-public class ChangeCube extends AppCompatActivity {
+public class ChangeCube extends AppCompatActivity implements View.OnClickListener{
+
+    private GalleryController controller = null;
+    private ArrayList<Integer> idList = new ArrayList<Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +52,39 @@ public class ChangeCube extends AppCompatActivity {
         ImageHub imageHub = new ImageHub();
         imageHub.add(images);
 
+        ((HorizontalScrollView) findViewById(R.id.horizontalScroll)).setOnClickListener(this);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.galleryLayout);
+        linearLayout.setOnClickListener(this);
 
-        GalleryController controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
+        controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
 
         controller.loadImages();
+
+        idList = controller.getIdList();
+
+        for(int i=0; i<idList.size(); i++) {
+            ((ImageView)findViewById(idList.get(i))).setOnClickListener(this);
+        }
+
 
 
     }
 
+    @Override
+    public void onClick(View view) {
+
+
+        //Toast.makeText(this, "IndexXXXXX ", Toast.LENGTH_SHORT).show();
+
+        for(int i=0; i<idList.size(); i++) {
+            if(view.getId() == idList.get(i)) {
+                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        switch (view.getId())
+        {
+
+        }
+    }
 }

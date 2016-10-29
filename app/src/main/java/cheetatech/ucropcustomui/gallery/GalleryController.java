@@ -4,12 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by erkan on 29.10.2016.
@@ -20,6 +22,9 @@ public class GalleryController {
     private ImageHub imageHub = null;
     private LinearLayout galleryLinearLayout = null;
     private Context context = null;
+    private ArrayList<Integer> idList = new ArrayList<>();
+    private ArrayList<Bitmap> bitmapList = new ArrayList<>();
+
 
     public GalleryController(){}
 
@@ -71,7 +76,13 @@ public class GalleryController {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageBitmap(bitmap);
 
+        int uniqueId = ViewIdGenerator.generateViewId();
+        imageView.setId(uniqueId);
+        idList.add(uniqueId);
+        bitmapList.add(bitmap);
+
         linearLayout.addView(imageView);
+        Log.e("TAG","Id ler : " + uniqueId);
         return linearLayout;
     }
 
@@ -84,6 +95,15 @@ public class GalleryController {
         return this.galleryLinearLayout;
     }
 
-
+    public ArrayList<Integer> getIdList()
+    {
+        return this.idList;
+    }
+    public Bitmap getBitmap(int index)
+    {
+        if(index >= 0 && index < this.bitmapList.size())
+            return this.bitmapList.get(index);
+        return null;
+    }
 
 }

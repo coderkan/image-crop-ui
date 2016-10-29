@@ -9,11 +9,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
 public class ChangeBackground extends AppCompatActivity implements View.OnClickListener{
+
+    private GalleryController controller = null;
+    private ArrayList<Integer> idList = new ArrayList<Integer>();
+    private ImageView backgroundImageView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +54,15 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.galleryLayout);
 
-        GalleryController controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
+        controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
 
         controller.loadImages();
+
+        idList = controller.getIdList();
+
+        for(int i=0; i<idList.size(); i++) {
+            ((ImageView)findViewById(idList.get(i))).setOnClickListener(this);
+        }
 
 
     }
@@ -58,7 +71,10 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
     {
         ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
         ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.backgroundImView)).setOnClickListener(this);
+        //((ImageView)findViewById(R.id.backgroundImView)).setOnClickListener(this);
+        backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
+        backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        //backgroundImageView.setOnClickListener(this);
     }
 
 
@@ -76,6 +92,14 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
             case R.id.backgroundImView:
 
                 break;
+        }
+
+        for(int i=0; i<idList.size(); i++) {
+            if(view.getId() == idList.get(i)) {
+                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
+                backgroundImageView.setImageBitmap(controller.getBitmap(i));
+
+            }
         }
 
     }
