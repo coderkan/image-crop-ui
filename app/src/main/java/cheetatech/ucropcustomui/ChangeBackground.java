@@ -8,6 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import cheetatech.ucropcustomui.gallery.GalleryController;
+import cheetatech.ucropcustomui.gallery.ImageHub;
 
 public class ChangeBackground extends AppCompatActivity implements View.OnClickListener{
 
@@ -19,6 +23,34 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
 
         loadElements();
+        loadGallery();
+
+    }
+
+    private void loadGallery()
+    {
+        int[] images = new int[]{
+                R.drawable.im1,
+                R.drawable.im2 ,
+                R.drawable.im3,
+                R.drawable.im4,
+                R.drawable.im5,
+                R.drawable.im6,
+                R.drawable.im7,
+                R.drawable.im8,
+                R.drawable.im9,
+                R.drawable.im10,
+                R.drawable.im11
+        };
+        ImageHub imageHub = new ImageHub();
+        imageHub.add(images);
+
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.galleryLayout);
+
+        GalleryController controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
+
+        controller.loadImages();
+
 
     }
 
