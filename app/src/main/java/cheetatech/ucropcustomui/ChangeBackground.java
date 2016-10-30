@@ -73,6 +73,7 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
         ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
         backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        ((ImageView)findViewById(R.id.iconOk)).setOnClickListener(this);
     }
 
 
@@ -89,6 +90,9 @@ public class ChangeBackground extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.backgroundImView:
 
+                break;
+            case R.id.iconOk:
+                // background imgesi kabul edilecek....
                 break;
         }
 

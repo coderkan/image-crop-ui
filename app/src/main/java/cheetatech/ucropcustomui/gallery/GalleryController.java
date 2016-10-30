@@ -24,6 +24,7 @@ public class GalleryController {
     private Context context = null;
     private ArrayList<Integer> idList = new ArrayList<>();
     private ArrayList<Bitmap> bitmapList = new ArrayList<>();
+    private int selectedIndex = 0;
 
 
     public GalleryController(){}
@@ -104,6 +105,15 @@ public class GalleryController {
         if(index >= 0 && index < this.bitmapList.size())
             return this.bitmapList.get(index);
         return null;
+    }
+
+    public void setSelectedIndex(int index)
+    {
+        this.selectedIndex = index;
+    }
+    public int getSelectedIndex()
+    {
+        return this.selectedIndex;
     }
 
 }

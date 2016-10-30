@@ -31,7 +31,7 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
     private ImageView  back = null, front = null,bottom = null, top = null, right = null, left = null;
     private ToggleButton  leftToggleButton = null,rightToggleButton = null, backToggleButton = null,
             frontToggleButton = null, bottomToggleButton = null,topToggleButton = null;
-
+    private ImageView applyButton;
 
     private CubeSidesController cubeSidesController = null;
 
@@ -50,6 +50,7 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
     private void loadElements()
     {
+        applyButton = (ImageView) findViewById(R.id.iconOk);
         front = (ImageView) findViewById(R.id.frontImView);
         back = (ImageView) findViewById(R.id.backImView);
         right =(ImageView) findViewById(R.id.rightImView);
@@ -69,6 +70,7 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
         topToggleButton.setOnClickListener(this);
         bottomToggleButton.setOnClickListener(this);
         rightToggleButton.setOnClickListener(this);
+        applyButton.setOnClickListener(this);
 
         front.setOnClickListener(this);
         back.setOnClickListener(this);
@@ -145,9 +147,10 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
         switch (view.getId())
         {
+            case R.id.iconOk :
+                cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
+                break;
             case R.id.frontImView:
-
-
                 break;
             case R.id.backImView:
                 break;
@@ -165,7 +168,7 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
             if(view.getId() == idList.get(i)) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
                 backgroundImageView.setImageBitmap(controller.getBitmap(i));
-                cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(i));
+                controller.setSelectedIndex(i);
             }
         }
 
