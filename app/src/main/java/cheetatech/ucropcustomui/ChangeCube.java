@@ -27,9 +27,10 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
     private ImageView backgroundImageView = null;
-    private ImageView   bottom = null, top = null, right = null, left = null;
-    private ToggleButton front = null;
-    private CheckBox back = null;
+    private ImageView  back = null, front = null,bottom = null, top = null, right = null, left = null;
+    private ToggleButton  leftToggleButton = null,rightToggleButton = null, backToggleButton = null,
+            frontToggleButton = null, bottomToggleButton = null,topToggleButton = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,12 +46,25 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
     private void loadElements()
     {
-        front = (ToggleButton) findViewById(R.id.frontImView);
-        back = (CheckBox) findViewById(R.id.backImView);
+        front = (ImageView) findViewById(R.id.frontImView);
+        back = (ImageView) findViewById(R.id.backImView);
         right =(ImageView) findViewById(R.id.rightImView);
         left = (ImageView) findViewById(R.id.leftImView);
         top = (ImageView) findViewById(R.id.topImView);
         bottom = (ImageView) findViewById(R.id.bottomImView);
+        leftToggleButton = (ToggleButton) findViewById(R.id.leftToggleButton);
+        backToggleButton =(ToggleButton) findViewById(R.id.backToggleButton);
+        frontToggleButton = (ToggleButton) findViewById(R.id.frontToggleButton);
+        topToggleButton = (ToggleButton) findViewById(R.id.topToggleButton);
+        bottomToggleButton = (ToggleButton) findViewById(R.id.bottomToggleButton);
+        rightToggleButton = (ToggleButton) findViewById(R.id.rightToggleButton);
+
+        leftToggleButton.setOnClickListener(this);
+        backToggleButton.setOnClickListener(this);
+        frontToggleButton.setOnClickListener(this);
+        topToggleButton.setOnClickListener(this);
+        bottomToggleButton.setOnClickListener(this);
+        rightToggleButton.setOnClickListener(this);
 
         front.setOnClickListener(this);
         back.setOnClickListener(this);
@@ -108,7 +122,7 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
 
 
-        
+
         switch (view.getId())
         {
             case R.id.frontImView:
@@ -124,6 +138,9 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
             case R.id.leftImView:
                 break;
             case R.id.bottomImView:
+                break;
+            case R.id.leftToggleButton:
+                Toast.makeText(this, "Toggled", Toast.LENGTH_SHORT).show();
                 break;
         }
 
