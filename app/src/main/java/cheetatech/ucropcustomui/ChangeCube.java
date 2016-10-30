@@ -19,6 +19,7 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
+import cheetatech.ucropcustomui.controllers.CubeSidesController;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
@@ -30,6 +31,9 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
     private ImageView  back = null, front = null,bottom = null, top = null, right = null, left = null;
     private ToggleButton  leftToggleButton = null,rightToggleButton = null, backToggleButton = null,
             frontToggleButton = null, bottomToggleButton = null,topToggleButton = null;
+
+
+    private CubeSidesController cubeSidesController = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,13 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
 
         bottom.setSelected(true);
 
+        cubeSidesController = new CubeSidesController(
+                new ToggleButton[]{frontToggleButton,backToggleButton,leftToggleButton,rightToggleButton,topToggleButton,bottomToggleButton},
+                new ImageView[]{front,back,left,right,top,bottom}
+                );
+
+        frontToggleButton.setChecked(true);
+        cubeSidesController.controlToggleButtons(frontToggleButton.getId());
     }
 
     private void loadGallery()
@@ -121,6 +132,15 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
 
+        int id = view.getId();
+        if(id == R.id.leftToggleButton || id == R.id.frontToggleButton|| id == R.id.backToggleButton|| id == R.id.rightToggleButton
+                || id == R.id.topToggleButton|| id == R.id.bottomToggleButton)
+        {
+            cubeSidesController.controlToggleButtons(id);
+
+            Toast.makeText(this, "Index "+ cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
 
         switch (view.getId())
@@ -139,15 +159,13 @@ public class ChangeCube extends AppCompatActivity implements View.OnClickListene
                 break;
             case R.id.bottomImView:
                 break;
-            case R.id.leftToggleButton:
-                Toast.makeText(this, "Toggled", Toast.LENGTH_SHORT).show();
-                break;
         }
 
         for(int i=0; i<idList.size(); i++) {
             if(view.getId() == idList.get(i)) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
                 backgroundImageView.setImageBitmap(controller.getBitmap(i));
+                cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(i));
             }
         }
 
