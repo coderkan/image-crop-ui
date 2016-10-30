@@ -55,7 +55,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
     private CubeSidesController cubeSidesController = null;
     private String mCurrentPhotoPath;
-
+    private Uri mUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,9 +243,24 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
         }else{
             Intent takePictureIntent = new Intent();
             takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
+            File photoFile = null;
+            try{
+                photoFile = createImageFile();
+            }catch (IOException e){
+                Toast.makeText(ChangeCube.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
+            }
+
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 try {
-                    startActivityForResult(takePictureIntent, REQUEST_START_CAMERA_APP);
+                    if(photoFile != null) {
+                        Uri photoUri = Uri.fromFile(photoFile); //FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        mUri = photoUri;
+                        startActivityForResult(takePictureIntent, REQUEST_START_CAMERA_APP);
+                    }
+
                 }catch (Exception ex){
                     Toast.makeText(ChangeCube.this, "PickImage " +ex.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e("ERROR", "Hata : "+ ex.getMessage());
@@ -253,37 +268,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
             }
         }
-
-//        Intent intent = new Intent();
-//        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-//        startActivityForResult(intent,REQUEST_START_CAMERA_APP);
-
-//        File photoFile = null;
-//        try{
-//            photoFile = createImageFile();
-//        }catch (IOException e){
-//            Toast.makeText(ChangeCube.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
-//        }
-//        if(photoFile != null){
-//            Uri photoUri = Uri.fromFile(photoFile); //FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
-//            startActivityForResult(intent,REQUEST_START_CAMERA_APP);
-//        }
-
-
-//
-//        if(Build.VERSION.SDK_INT  >= Build.VERSION_CODES.JELLY_BEAN
-//            && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-//            != PackageManager.PERMISSION_GRANTED ){
-//            requestPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE,getString(R.string.permission_read_storage_rationale),
-//                REQUEST_STORAGE_READ_ACCESS_PERMISSION);
-//        }else{
-//            Intent intent = new Intent();
-//            intent.setType("image/*");
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//            intent.addCategory(Intent.CATEGORY_OPENABLE);
-//            startActivityForResult(Intent.createChooser(intent,getString(R.string.label_select_picture)),REQUEST_SELECT_PICTURE);
-//        }
 
     }
 
@@ -309,16 +293,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     }
 
     private File createImageFile() throws IOException {
-
-        if(Build.VERSION.SDK_INT  >= Build.VERSION_CODES.JELLY_BEAN
-                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ) {
-                Toast.makeText(ChangeCube.this, "External Permission", Toast.LENGTH_SHORT).show();
-
-            //requestPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.permission_read_storage_rationale),
-            //        REQUEST_STORAGE_READ_ACCESS_PERMISSION);
-        }
-
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -331,7 +305,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        Toast.makeText(ChangeCube.this, " : : "+mCurrentPhotoPath, Toast.LENGTH_SHORT).show();
         return image;
     }
 
@@ -353,20 +326,12 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
             }
             else if(requestCode == REQUEST_START_CAMERA_APP){
                 // save images
-                Toast.makeText(ChangeCube.this, "Saved Image...", Toast.LENGTH_SHORT).show();
-                //final Uri takenImage = data.getData();
-
-//                File photoFile = null;
-//                try{
-//                    photoFile = createImageFile();
-//                }catch (IOException e){
-//                    Toast.makeText(ChangeCube.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
-//                }
-//                if(takenImage != null){
-//                    startCropActivityFromCamera(data.getData());
-//                }else{
-//                    Toast.makeText(ChangeCube.this, "Error", Toast.LENGTH_SHORT).show();
-//                }
+                try {
+                    startCropActivityFromCamera();
+                }catch (Exception ex){
+                    Log.e("TAG","Cannot Start CropActivity");
+                    Toast.makeText(ChangeCube.this, "Exception Error "+ ex.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
         if (resultCode == UCrop.RESULT_ERROR) {
@@ -376,19 +341,11 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     }
 
 
-    private void startCropActivityFromCamera(@NonNull Uri uri) {
-        Toast.makeText(ChangeCube.this, uri.toString(), Toast.LENGTH_SHORT).show();
+    private void startCropActivityFromCamera(/*@NonNull Uri uri*/) {
+        Uri uri = mUri;
+        Toast.makeText(ChangeCube.this, "Uri Uri "+uri.toString(), Toast.LENGTH_SHORT).show();
         String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
         destinationFileName += ".png";
-//        switch (mRadioGroupCompressionSettings.getCheckedRadioButtonId()) {
-////            case R.id.radio_png:
-////                destinationFileName += ".png";
-////                break;
-////            case R.id.radio_jpeg:
-////                destinationFileName += ".jpg";
-////                break;
-//        }
-
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
