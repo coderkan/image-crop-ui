@@ -162,6 +162,7 @@ public class CropResult extends BaseActivity implements View.OnClickListener {
         {
             case R.id.iconOk:
                 saveCroppedImage();
+                onBackPressed();
                 break;
 
         }

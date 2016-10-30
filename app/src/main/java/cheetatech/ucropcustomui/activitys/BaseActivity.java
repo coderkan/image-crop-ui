@@ -17,7 +17,7 @@ public class BaseActivity extends AppCompatActivity {
     protected static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
     protected static final int REQUEST_SELECT_PICTURE = 0x01;
     protected static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
-
+    protected static final String SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME = "SampleCropBackgroundImage";
     private AlertDialog mAlertDialog;
 
     /**
