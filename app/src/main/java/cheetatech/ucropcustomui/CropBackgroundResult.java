@@ -44,7 +44,7 @@ public class CropBackgroundResult extends BaseActivity implements View.OnClickLi
     private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
 
     public static void startWithUri(@NonNull Context context, @NonNull Uri uri) {
-        Intent intent = new Intent(context, CropResult.class);
+        Intent intent = new Intent(context, CropBackgroundResult.class);
         intent.setData(uri);
         context.startActivity(intent);
     }

@@ -7,11 +7,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,7 +30,10 @@ import android.widget.ToggleButton;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.jar.Manifest;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
@@ -48,6 +54,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     private ImageView applyButton;
 
     private CubeSidesController cubeSidesController = null;
+    private String mCurrentPhotoPath;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,7 +183,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
                 break;
 
             case R.id.fabCamera:
-
+                pickFromCamera();
                 break;
 
             case R.id.frontImView:
@@ -222,6 +230,64 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
     }
 
+
+    private void pickFromCamera()
+    {
+
+        if(Build.VERSION.SDK_INT  >= Build.VERSION_CODES.JELLY_BEAN
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED ){
+            requestPermission(android.Manifest.permission.CAMERA,getString(R.string.permission_camera_rationale),
+                    REQUEST_CAMERA_ACCESS_PERMISSION);
+
+        }else{
+            Intent takePictureIntent = new Intent();
+            takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                try {
+                    startActivityForResult(takePictureIntent, REQUEST_START_CAMERA_APP);
+                }catch (Exception ex){
+                    Toast.makeText(ChangeCube.this, "PickImage " +ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("ERROR", "Hata : "+ ex.getMessage());
+                }
+
+            }
+        }
+
+//        Intent intent = new Intent();
+//        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+//        startActivityForResult(intent,REQUEST_START_CAMERA_APP);
+
+//        File photoFile = null;
+//        try{
+//            photoFile = createImageFile();
+//        }catch (IOException e){
+//            Toast.makeText(ChangeCube.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
+//        }
+//        if(photoFile != null){
+//            Uri photoUri = Uri.fromFile(photoFile); //FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
+//            startActivityForResult(intent,REQUEST_START_CAMERA_APP);
+//        }
+
+
+//
+//        if(Build.VERSION.SDK_INT  >= Build.VERSION_CODES.JELLY_BEAN
+//            && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+//            != PackageManager.PERMISSION_GRANTED ){
+//            requestPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE,getString(R.string.permission_read_storage_rationale),
+//                REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+//        }else{
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            startActivityForResult(Intent.createChooser(intent,getString(R.string.label_select_picture)),REQUEST_SELECT_PICTURE);
+//        }
+
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
@@ -232,11 +298,43 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
                     pickFromGallery();
                 }
                 break;
+            case REQUEST_CAMERA_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    pickFromCamera();
+                }
             default:
                 super.onRequestPermissionsResult(requestCode,permissions,grantResults);
                 break;
         }
     }
+
+    private File createImageFile() throws IOException {
+
+        if(Build.VERSION.SDK_INT  >= Build.VERSION_CODES.JELLY_BEAN
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ) {
+                Toast.makeText(ChangeCube.this, "External Permission", Toast.LENGTH_SHORT).show();
+
+            //requestPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.permission_read_storage_rationale),
+            //        REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+        }
+
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".png",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        Toast.makeText(ChangeCube.this, " : : "+mCurrentPhotoPath, Toast.LENGTH_SHORT).show();
+        return image;
+    }
+
 
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data)
@@ -253,6 +351,23 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
             }else if (requestCode == UCrop.REQUEST_CROP) {
                 handleCropResult(data);
             }
+            else if(requestCode == REQUEST_START_CAMERA_APP){
+                // save images
+                Toast.makeText(ChangeCube.this, "Saved Image...", Toast.LENGTH_SHORT).show();
+                //final Uri takenImage = data.getData();
+
+//                File photoFile = null;
+//                try{
+//                    photoFile = createImageFile();
+//                }catch (IOException e){
+//                    Toast.makeText(ChangeCube.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
+//                }
+//                if(takenImage != null){
+//                    startCropActivityFromCamera(data.getData());
+//                }else{
+//                    Toast.makeText(ChangeCube.this, "Error", Toast.LENGTH_SHORT).show();
+//                }
+            }
         }
         if (resultCode == UCrop.RESULT_ERROR) {
             handleCropError(data);
@@ -260,7 +375,9 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
     }
 
-    private void startCropActivity(@NonNull Uri uri) {
+
+    private void startCropActivityFromCamera(@NonNull Uri uri) {
+        Toast.makeText(ChangeCube.this, uri.toString(), Toast.LENGTH_SHORT).show();
         String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
         destinationFileName += ".png";
 //        switch (mRadioGroupCompressionSettings.getCheckedRadioButtonId()) {
@@ -271,6 +388,32 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 ////                destinationFileName += ".jpg";
 ////                break;
 //        }
+
+
+        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
+
+
+
+        uCrop = basisConfig(uCrop);
+        uCrop = advancedConfig(uCrop);
+
+        uCrop.start(ChangeCube.this);
+
+    }
+
+    private void startCropActivity(@NonNull Uri uri) {
+        Toast.makeText(ChangeCube.this, uri.toString(), Toast.LENGTH_SHORT).show();
+        String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
+        destinationFileName += ".png";
+//        switch (mRadioGroupCompressionSettings.getCheckedRadioButtonId()) {
+////            case R.id.radio_png:
+////                destinationFileName += ".png";
+////                break;
+////            case R.id.radio_jpeg:
+////                destinationFileName += ".jpg";
+////                break;
+//        }
+
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
