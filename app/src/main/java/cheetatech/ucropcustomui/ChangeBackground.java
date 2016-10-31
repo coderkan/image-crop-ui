@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
+import cheetatech.ucropcustomui.controllers.ImageController;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
@@ -50,9 +51,10 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     private Uri mUri = null;
     private String mCurrentPhotoPath = null;
-    private String cubeBackgroundPath = "cube_background.png";
+    public static String cubeBackgroundPath = "cube_background.png";
     private boolean isImage = false;
 
+    private ImageController imageController = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,10 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         setContentView(R.layout.activity_change_background);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        if(imageController == null)
+            imageController = new ImageController(getApplicationContext());
 
         loadElements();
         loadGallery();
@@ -106,8 +112,17 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         ((ImageView)findViewById(R.id.iconOk)).setOnClickListener(this);
+
+        imageController.setBackgroundImageView(backgroundImageView);
+        imageController.loadBackgroundImage();
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        imageController.loadBackgroundImage();
+    }
 
     @Override
     public void onClick(View view) {

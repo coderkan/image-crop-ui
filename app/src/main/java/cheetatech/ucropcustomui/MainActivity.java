@@ -10,9 +10,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import cheetatech.ucropcustomui.controllers.ImageController;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private ImageController imageController = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,9 +24,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if(imageController == null)
+            imageController = new ImageController(getApplicationContext());
 
         loadElements();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        imageController.loadBackgroundImage();
     }
 
     private void loadElements()
@@ -37,8 +50,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((ImageView)findViewById(R.id.bottomImView)).setOnClickListener(this);
         ((ImageView)findViewById(R.id.backgroundImView)).setOnClickListener(this);
 
+        imageController.setBackgroundImageView((ImageView)findViewById(R.id.backgroundImView));
+
+        imageController.loadBackgroundImage();
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

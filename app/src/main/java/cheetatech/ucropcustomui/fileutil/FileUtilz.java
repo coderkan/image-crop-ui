@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 public class FileUtilz {
 
 
+
     public static File getOutputMediaFile(Context context,String mImageName){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
@@ -37,5 +38,4 @@ public class FileUtilz {
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         return mediaFile;
     }
-
 }
