@@ -7,6 +7,8 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,7 +24,10 @@ import android.widget.Toast;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.gallery.GalleryController;
@@ -36,6 +41,9 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
     private ImageView backgroundImageView = null;
+
+    private Uri mUri = null;
+    private String mCurrentPhotoPath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +106,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         switch (view.getId())
         {
             case R.id.fabCamera:
-
+                pickFromCamera();
                 break;
             case R.id.fabGallery:
                 pickFromGallery();
@@ -140,6 +148,80 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     }
 
+
+    private void pickFromCamera()
+    {
+
+        if(Build.VERSION.SDK_INT  >= Build.VERSION_CODES.JELLY_BEAN
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED ){
+            requestPermission(android.Manifest.permission.CAMERA,getString(R.string.permission_camera_rationale),
+                    REQUEST_CAMERA_ACCESS_PERMISSION);
+
+        }else{
+            Intent takePictureIntent = new Intent();
+            takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
+            File photoFile = null;
+            try{
+                photoFile = createImageFile();
+            }catch (IOException e){
+                Toast.makeText(ChangeBackground.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
+            }
+
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                try {
+                    if(photoFile != null) {
+                        Uri photoUri = Uri.fromFile(photoFile); //FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                        mUri = photoUri;
+                        startActivityForResult(takePictureIntent, REQUEST_START_CAMERA_APP);
+                    }
+
+                }catch (Exception ex){
+                    Toast.makeText(ChangeBackground.this, "PickImage " +ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("ERROR", "Hata : "+ ex.getMessage());
+                }
+
+            }
+        }
+
+    }
+
+    private void startCropActivityFromCamera(/*@NonNull Uri uri*/) {
+        Uri uri = mUri;
+        Toast.makeText(ChangeBackground.this, "Uri Uri "+uri.toString(), Toast.LENGTH_SHORT).show();
+        String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
+        destinationFileName += ".png";
+
+        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
+
+
+
+        uCrop = basisConfig(uCrop);
+        uCrop = advancedConfig(uCrop);
+
+        uCrop.start(ChangeBackground.this);
+
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".png",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
@@ -150,6 +232,10 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                     pickFromGallery();
                 }
                 break;
+            case REQUEST_CAMERA_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    pickFromCamera();
+                }
             default:
                 super.onRequestPermissionsResult(requestCode,permissions,grantResults);
                 break;
@@ -170,6 +256,14 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
             }else if (requestCode == UCrop.REQUEST_CROP) {
                 handleCropResult(data);
+            }else if(requestCode == REQUEST_START_CAMERA_APP){
+                // save images
+                try {
+                    startCropActivityFromCamera();
+                }catch (Exception ex){
+                    Log.e("TAG","Cannot Start CropActivity");
+                    Toast.makeText(ChangeBackground.this, "Exception Error "+ ex.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
         if (resultCode == UCrop.RESULT_ERROR) {

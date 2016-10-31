@@ -66,8 +66,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
         loadElements();
         loadGallery();
-
-
     }
 
     private void loadElements()
