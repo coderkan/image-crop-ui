@@ -49,7 +49,7 @@ import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
-public class ChangeBackground extends BaseActivity implements View.OnClickListener, onChangeBackground{
+public class ChangeBackground extends BaseActivity implements View.OnClickListener {
 
 
     private static final String TAG = "ChangeBackgroun";
@@ -61,6 +61,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private Uri mUri = null;
     private String mCurrentPhotoPath = null;
     public static String cubeBackgroundPath = "cube_background.png";
+
     private boolean isImage = false;
 
     private ImageController imageController = null;
@@ -68,11 +69,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
 
 
-    public static void startWithUri(@NonNull Context context, @NonNull Uri uri) {
-        Intent intent = new Intent(context, ChangeBackground.class);
-        intent.setData(uri);
-        context.startActivity(intent);
-    }
 
 
 
@@ -84,7 +80,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         setSupportActionBar(toolbar);
 
 
-        IntChange.getInstance().setListener(this);
+
 
         if(imageController == null)
             imageController = new ImageController(getApplicationContext());
@@ -136,14 +132,19 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         ((ImageView)findViewById(R.id.iconOk)).setOnClickListener(this);
 
         imageController.setBackgroundImageView(backgroundImageView);
-        imageController.loadBackgroundImage();
+
+        imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
+        imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        imageController.loadBackgroundImage();
+        //imageController.loadBackgroundImage(); // current bitmap load
+        imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
+        imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
+        //imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
         //imageController.loadBitmap(this.backgroundImageView,mUri);
     }
 
@@ -172,6 +173,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
             if(view.getId() == idList.get(i)) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
                 backgroundImageView.setImageBitmap(controller.getBitmap(i));
+                imageController.setCurrentBitmap(controller.getBitmap(i));
                 controller.setSelectedIndex(i);
             }
         }
@@ -187,7 +189,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else{
 
-            Bitmap bitmap = controller.getBitmap(controller.getSelectedIndex());
+            Bitmap bitmap = imageController.getCurrentBitmap();//controller.getBitmap(controller.getSelectedIndex());
             File pictureFile = FileUtilz.getOutputMediaFile(getApplicationContext(),cubeBackgroundPath);
             if(pictureFile == null)
             {
@@ -206,43 +208,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
             }
 
             Log.e(TAG,"Path is "+ pictureFile.toString());
-
-//            String downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-//
-//            File image = null;
-//            Bitmap bitmap = controller.getBitmap(controller.getSelectedIndex());
-//            FileOutputStream fos = null;
-//            try {
-//                image = new File(downloadsDirectoryPath, cubeBackgroundPath+".png");
-//                fos = new FileOutputStream(image);
-//                bitmap.compress(Bitmap.CompressFormat.PNG,100,fos);
-//                fos.flush();
-//                fos.close();
-//            }catch (IOException e){
-//                Log.e(TAG,"Exception "+e.getMessage());
-//                Toast.makeText(this, "Index "+e.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-
-
-//            File image = null;
-//            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//            Bitmap bitmap = controller.getBitmap(controller.getSelectedIndex());
-//            FileOutputStream fos = null;
-//            try {
-//                image = File.createTempFile(
-//                        mCurrentPhotoPath,  /* prefix */
-//                        ".png",         /* suffix */
-//                        storageDir      /* directory */
-//                );
-//                fos = new FileOutputStream(image);
-//                bitmap.compress(Bitmap.CompressFormat.PNG,100,fos);
-//                fos.flush();
-//                fos.close();
-//            }catch (IOException e){
-//                Log.e(TAG,"Exception "+e.getMessage());
-//                Toast.makeText(this, "Index "+e.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-            //Log.e(TAG,"Path is "+ image.toString());
         }
     }
 
@@ -276,6 +241,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                     REQUEST_CAMERA_ACCESS_PERMISSION);
 
         }else{
+            // Camera intent
+
             Intent takePictureIntent = new Intent();
             takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -401,18 +368,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private void startCropActivity(@NonNull Uri uri) {
         String destinationFileName = SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME;
         destinationFileName += ".png";
-//        switch (mRadioGroupCompressionSettings.getCheckedRadioButtonId()) {
-////            case R.id.radio_png:
-////                destinationFileName += ".png";
-////                break;
-////            case R.id.radio_jpeg:
-////                destinationFileName += ".jpg";
-////                break;
-//        }
-
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
-
-
 
         uCrop = basisConfig(uCrop);
         uCrop = advancedConfig(uCrop);
@@ -462,6 +418,9 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         }
     }
 
+
+
+
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     private void handleCropError(@NonNull Intent result) {
         final Throwable cropError = UCrop.getError(result);
@@ -471,25 +430,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         } else {
             Toast.makeText(ChangeBackground.this, R.string.toast_unexpected_error, Toast.LENGTH_SHORT).show();
         }
-    }
-
-
-    @Override
-    public void onChangeBackground() {
-        Toast.makeText(ChangeBackground.this, "onChangeBackground()", Toast.LENGTH_LONG).show();
-        Log.e(TAG,"onChangeBackground()");
-    }
-
-    @Override
-    public void onChangeBackground(Uri uri) {
-        Toast.makeText(ChangeBackground.this, "onChangeBackground(Uri uri)", Toast.LENGTH_LONG).show();
-        Log.e(TAG,"onChangeBackground(Uri uri)");
-    }
-
-    @Override
-    public void onChangeBackground(Bitmap bitmap) {
-        Toast.makeText(ChangeBackground.this, "onChangeBackground(Bitmap bitmap)", Toast.LENGTH_LONG).show();
-        Log.e(TAG,"onChangeBackground(Bitmap bitmap)");
     }
 
     private void saveCroppedImage(Uri uri) {

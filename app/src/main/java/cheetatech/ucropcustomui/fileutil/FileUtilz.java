@@ -43,14 +43,15 @@ public class FileUtilz {
 
     public static File createImageFile(Context context) throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "reference_image.png";// "JPEG_" + timeStamp + "_";
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".png",         /* suffix */
-                storageDir      /* directory */
-        );
+//        /*File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".png",         /* suffix */
+//                storageDir      /* directory */
+//        );
+        File image = new File(storageDir,imageFileName);
         return image;
     }
 }

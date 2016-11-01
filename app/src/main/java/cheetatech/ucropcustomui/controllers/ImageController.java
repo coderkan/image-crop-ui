@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ public class ImageController {
     private ImageView backgroundImageView = null;
     private ImageView[] cubeSideImageViews = new ImageView[6];
 
+    private Bitmap currentBitmap = null;
 
     public ImageController()
     {
@@ -56,6 +58,18 @@ public class ImageController {
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
         this.backgroundImageView.setImageBitmap(bitmap);
+    }
+
+    public Bitmap getBackgroundBitmap(){
+        File pictureFile = FileUtilz.getOutputMediaFile(context, ChangeBackground.cubeBackgroundPath);
+
+        if(pictureFile == null)
+            Log.e("TAG","Error Load BackgroundImage : NULL");
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        return bitmap;
     }
 
     public void addCubeSideImageViews(ImageView[] imageViews)
@@ -88,6 +102,9 @@ public class ImageController {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        imageView.setImageBitmap(bitmap);
+    }
+    public void loadBitmap(ImageView imageView,Bitmap bitmap){
         imageView.setImageBitmap(bitmap);
     }
 
@@ -172,6 +189,14 @@ public class ImageController {
 
 
     }
+
+    public void setCurrentBitmap(Bitmap bitmap){
+        this.currentBitmap = bitmap;
+    }
+    public Bitmap getCurrentBitmap(){
+        return this.currentBitmap;
+    }
+
 
 
 }
