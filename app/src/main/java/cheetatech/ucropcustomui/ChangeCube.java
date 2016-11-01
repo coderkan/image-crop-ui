@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import android.widget.ToggleButton;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +41,9 @@ import java.util.jar.Manifest;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.CubeSidesController;
+import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.controllers.Side;
+import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
@@ -51,11 +57,13 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     private ImageView  back = null, front = null,bottom = null, top = null, right = null, left = null;
     private ToggleButton  leftToggleButton = null,rightToggleButton = null, backToggleButton = null,
             frontToggleButton = null, bottomToggleButton = null,topToggleButton = null;
-    private ImageView applyButton;
+    private ImageView applyButton,okButton;
 
     private CubeSidesController cubeSidesController = null;
     private String mCurrentPhotoPath;
     private Uri mUri = null;
+
+    private ImageController imageController = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +79,15 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     private void loadElements()
     {
 
+
+        if(imageController == null)
+            imageController = new ImageController(getApplicationContext());
+
         ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
         ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
 
-        applyButton = (ImageView) findViewById(R.id.iconOk);
+        okButton = (ImageView) findViewById(R.id.iconOk);
+        applyButton = (ImageView) findViewById(R.id.iconApply);
         front = (ImageView) findViewById(R.id.frontImView);
         back = (ImageView) findViewById(R.id.backImView);
         right =(ImageView) findViewById(R.id.rightImView);
@@ -97,6 +110,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
         bottomToggleButton.setOnClickListener(this);
         rightToggleButton.setOnClickListener(this);
         applyButton.setOnClickListener(this);
+        okButton.setOnClickListener(this);
 
         front.setOnClickListener(this);
         back.setOnClickListener(this);
@@ -104,6 +118,18 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
         left.setOnClickListener(this);
         top.setOnClickListener(this);
         bottom.setOnClickListener(this);
+
+        imageController.addCubeSideImageViews(new ImageView[]{
+                front,
+                back,
+                left,
+                right,
+                top,
+                bottom
+        });
+
+        imageController.loadAllBitmapCubeSideFromPicture();
+
 
         bottom.setSelected(true);
 
@@ -121,6 +147,11 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
         backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        //imageController.setBackgroundImageView(backgroundImageView);
+
+        imageController.loadBitmap(backgroundImageView, Side.FRONT);
+
 
         int[] images = new int[]{
                 R.drawable.im1,
@@ -164,6 +195,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
                 || id == R.id.topToggleButton|| id == R.id.bottomToggleButton)
         {
             cubeSidesController.controlToggleButtons(id);
+            imageController.loadBitmap(backgroundImageView,cubeSidesController.getSelectedIndex());
 
             Toast.makeText(this, "Index "+ cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
             return;
@@ -175,7 +207,10 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
             case R.id.iconOk :
                 cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
                 break;
-
+            case R.id.iconApply:
+                saveImage();
+                onBackPressed();
+                break;
             case R.id.fabGallery:
                 pickFromGallery();
                 break;
@@ -284,6 +319,11 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     pickFromCamera();
                 }
+            case REQUEST_STORAGE_WRITE_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    saveImage();
+                }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode,permissions,grantResults);
                 break;
@@ -429,4 +469,15 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
 
 
+    private void saveImage() {
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    getString(R.string.permission_write_storage_rationale),
+                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
+        }else{
+            imageController.saveCubeSidesImage();
+        }
+    }
 }

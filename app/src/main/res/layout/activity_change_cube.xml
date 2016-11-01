@@ -24,6 +24,17 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 >
+
+                <ImageView
+                    android:id="@+id/iconApply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_apply"
+                    android:layout_toLeftOf="@+id/iconOk"
+                    android:layout_centerInParent="true"
+                    android:layout_marginRight="15dp"
+                    />
+
                 <ImageView
                     android:id="@+id/iconOk"
                     android:layout_width="wrap_content"

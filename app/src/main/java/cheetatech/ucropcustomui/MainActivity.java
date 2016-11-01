@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
 
         imageController.loadBackgroundImage();
+        imageController.loadAllBitmapCubeSideFromPicture();
+
     }
 
     private void loadElements()
@@ -53,7 +55,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageController.setBackgroundImageView((ImageView)findViewById(R.id.backgroundImView));
 
         imageController.loadBackgroundImage();
-
+        imageController.addCubeSideImageViews(new ImageView[]{
+                ((ImageView)findViewById(R.id.frontImView)),
+                ((ImageView)findViewById(R.id.backImView)),
+                ((ImageView)findViewById(R.id.leftImView)),
+                ((ImageView)findViewById(R.id.rightImView)),
+                ((ImageView)findViewById(R.id.topImView)),
+                ((ImageView)findViewById(R.id.bottomImView))
+        });
+        imageController.loadAllBitmapCubeSideFromPicture();
     }
 
 
