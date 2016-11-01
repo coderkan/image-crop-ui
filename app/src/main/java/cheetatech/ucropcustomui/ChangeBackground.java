@@ -1,10 +1,14 @@
 package cheetatech.ucropcustomui;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.Image;
+
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,9 +31,11 @@ import android.widget.Toast;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,11 +43,13 @@ import java.util.Date;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.controllers.IntChange;
+import cheetatech.ucropcustomui.controllers.onChangeBackground;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
-public class ChangeBackground extends BaseActivity implements View.OnClickListener{
+public class ChangeBackground extends BaseActivity implements View.OnClickListener, onChangeBackground{
 
 
     private static final String TAG = "ChangeBackgroun";
@@ -56,6 +65,17 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     private ImageController imageController = null;
 
+    private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
+
+
+    public static void startWithUri(@NonNull Context context, @NonNull Uri uri) {
+        Intent intent = new Intent(context, ChangeBackground.class);
+        intent.setData(uri);
+        context.startActivity(intent);
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +83,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        IntChange.getInstance().setListener(this);
 
         if(imageController == null)
             imageController = new ImageController(getApplicationContext());
@@ -122,6 +144,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     {
         super.onResume();
         imageController.loadBackgroundImage();
+        //imageController.loadBitmap(this.backgroundImageView,mUri);
     }
 
     @Override
@@ -259,7 +282,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
             File photoFile = null;
             try{
-                photoFile = createImageFile();
+                photoFile = FileUtilz.createImageFile(getApplicationContext()); //createImageFile();
             }catch (IOException e){
                 Toast.makeText(ChangeBackground.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
             }
@@ -291,6 +314,9 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
+
+        //FileUtilz.getOutputMediaFile(getApplicationContext(),"camera_crop_image.png");
+        //UCrop uCrop = UCrop.of(uri, Uri.fromFile(FileUtilz.getOutputMediaFile(getApplicationContext(),"camera_crop_image.png")));
 
 
         uCrop = basisConfig(uCrop);
@@ -424,7 +450,13 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private void handleCropResult(@NonNull Intent result) {
         final Uri resultUri = UCrop.getOutput(result);
         if (resultUri != null) {
-            CropResult.startWithUri(ChangeBackground.this, resultUri);
+            saveCroppedImage(resultUri);
+            //CropResult.startWithUri(ChangeBackground.this, resultUri);
+            //ChangeBackground.startWithUri(ChangeBackground.this, resultUri);
+            Log.e("TAG","result uri "+ resultUri.getPath());
+
+
+            //imageController.loadBitmap(this.backgroundImageView,mUri);
         } else {
             Toast.makeText(ChangeBackground.this, R.string.toast_cannot_retrieve_cropped_image, Toast.LENGTH_SHORT).show();
         }
@@ -442,5 +474,81 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     }
 
 
+    @Override
+    public void onChangeBackground() {
+        Toast.makeText(ChangeBackground.this, "onChangeBackground()", Toast.LENGTH_LONG).show();
+        Log.e(TAG,"onChangeBackground()");
+    }
 
+    @Override
+    public void onChangeBackground(Uri uri) {
+        Toast.makeText(ChangeBackground.this, "onChangeBackground(Uri uri)", Toast.LENGTH_LONG).show();
+        Log.e(TAG,"onChangeBackground(Uri uri)");
+    }
+
+    @Override
+    public void onChangeBackground(Bitmap bitmap) {
+        Toast.makeText(ChangeBackground.this, "onChangeBackground(Bitmap bitmap)", Toast.LENGTH_LONG).show();
+        Log.e(TAG,"onChangeBackground(Bitmap bitmap)");
+    }
+
+    private void saveCroppedImage(Uri uri) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    getString(R.string.permission_write_storage_rationale),
+                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
+        } else {
+            Uri imageUri = uri;//getIntent().getData();
+            if (imageUri != null && imageUri.getScheme().equals("file")) {
+                try {
+                    copyFileToDownloads(imageUri);
+                } catch (Exception e) {
+                    Toast.makeText(ChangeBackground.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, imageUri.toString(), e);
+                }
+            } else {
+                Toast.makeText(ChangeBackground.this, getString(R.string.toast_unexpected_error), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
+        String downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        String filename = String.format("%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
+
+        File saveFile = FileUtilz.getOutputMediaFile(getApplicationContext(), ChangeBackground.cubeBackgroundPath); //new File(downloadsDirectoryPath, filename);
+
+        FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
+        FileOutputStream outStream = new FileOutputStream(saveFile);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+
+        File file = new File(croppedFileUri.getPath());
+        if(file != null)
+            file.delete();
+
+        showNotification(saveFile);
+    }
+
+    private void showNotification(@NonNull File file) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.fromFile(file), "image/*");
+
+        NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this);
+
+        mNotification
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.notification_image_saved_click_to_preview))
+                .setTicker(getString(R.string.notification_image_saved))
+                .setSmallIcon(R.drawable.ic_icon_ok)
+                .setOngoing(false)
+                .setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
+                .setAutoCancel(true);
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(DOWNLOAD_NOTIFICATION_ID_DONE, mNotification.build());
+    }
 }

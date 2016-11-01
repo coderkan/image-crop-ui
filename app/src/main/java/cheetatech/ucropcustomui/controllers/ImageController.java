@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.widget.ImageView;
@@ -88,6 +89,20 @@ public class ImageController {
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
         imageView.setImageBitmap(bitmap);
+    }
+
+    public void loadBitmap(ImageView imageView, Uri uri)
+    {
+        try{
+            Log.e("TAG","In Function " );
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            Bitmap bitmap = BitmapFactory.decodeFile(new File(uri.getPath()).getAbsolutePath(), options);
+            imageView.setImageBitmap(bitmap);
+        }catch (Exception e){
+            Log.e("TAG","Error "+ e.getMessage());
+        }
+
     }
 
     public void loadBitmapCubeSideFromPicture(int side)

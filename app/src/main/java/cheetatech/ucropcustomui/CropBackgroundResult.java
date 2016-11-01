@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.Image;
@@ -37,9 +38,12 @@ import java.nio.channels.FileChannel;
 import java.util.Calendar;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
+import cheetatech.ucropcustomui.controllers.IntChange;
+import cheetatech.ucropcustomui.controllers.onChangeBackground;
 
 public class CropBackgroundResult extends BaseActivity implements View.OnClickListener {
 
+    private onChangeBackground listener = null;
     private static final String TAG = "CropResult";
     private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
 
@@ -55,6 +59,7 @@ public class CropBackgroundResult extends BaseActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crop_result);
 
+        this.listener = IntChange.getInstance().getListener();
 
         try {
             UCropView uCropView = (UCropView) findViewById(R.id.ucrop);
