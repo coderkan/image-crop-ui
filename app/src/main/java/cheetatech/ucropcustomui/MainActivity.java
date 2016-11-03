@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             case R.id.cubeBackgroundChange :
+                //startActivity(new Intent(this, BackgroundActivity.class));
                 startActivity(new Intent(this, ChangeCube.class));
                 break;
             case R.id.frontImView :
