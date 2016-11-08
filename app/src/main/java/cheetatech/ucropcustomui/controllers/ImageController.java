@@ -192,12 +192,16 @@ public class ImageController {
         String path = Side.cubeSidePath[side];
         File pictureFile = FileUtilz.getOutputMediaFile(context, path);
 
-        if(pictureFile == null)
-            Log.e("TAG","Error Load BackgroundImage : NULL");
-
+        Bitmap bitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        if(pictureFile == null)
+        {
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1);
+            Log.e("TAG","Error Load BackgroundImage : NULL");
+        }else{
+            bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        }
         imageView.setImageBitmap(bitmap);
     }
     public void loadBitmap(ImageView imageView,Bitmap bitmap){

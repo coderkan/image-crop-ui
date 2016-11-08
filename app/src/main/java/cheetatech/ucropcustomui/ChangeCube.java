@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.jar.Manifest;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.CubeSidesController;
 import cheetatech.ucropcustomui.controllers.ImageController;
@@ -51,13 +53,36 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
     private static final String TAG = "ChangeCube";
 
+
+
+
+
+    @BindView(R.id.fabGallery) FloatingActionButton fabGallery;
+    @BindView(R.id.fabCamera) FloatingActionButton fabCamera;
+
+    @BindView(R.id.iconOk) ImageView okButton ;
+    @BindView(R.id.iconApply)ImageView applyButton ;
+    @BindView(R.id.frontImView) ImageView front ;
+    @BindView(R.id.backImView) ImageView back ;
+    @BindView(R.id.rightImView)ImageView right;
+    @BindView(R.id.leftImView) ImageView left;
+    @BindView(R.id.topImView)ImageView top ;
+    @BindView(R.id.bottomImView) ImageView bottom ;
+    @BindView(R.id.leftToggleButton)ToggleButton leftToggleButton ;
+    @BindView(R.id.backToggleButton)ToggleButton backToggleButton ;
+    @BindView(R.id.frontToggleButton)ToggleButton frontToggleButton ;
+    @BindView(R.id.topToggleButton)ToggleButton topToggleButton ;
+    @BindView(R.id.bottomToggleButton)ToggleButton bottomToggleButton ;
+    @BindView(R.id.rightToggleButton)ToggleButton rightToggleButton ;
+
+
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
     private ImageView backgroundImageView = null;
-    private ImageView  back = null, front = null,bottom = null, top = null, right = null, left = null;
-    private ToggleButton  leftToggleButton = null,rightToggleButton = null, backToggleButton = null,
-            frontToggleButton = null, bottomToggleButton = null,topToggleButton = null;
-    private ImageView applyButton,okButton;
+//    private ImageView  back = null, front = null,bottom = null, top = null, right = null, left = null;
+//    private ToggleButton  leftToggleButton = null,rightToggleButton = null, backToggleButton = null,
+//            frontToggleButton = null, bottomToggleButton = null,topToggleButton = null;
+//    private ImageView applyButton,okButton;
 
     private CubeSidesController cubeSidesController = null;
     private String mCurrentPhotoPath;
@@ -69,6 +94,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_cube);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -83,26 +109,26 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
         if(imageController == null)
             imageController = new ImageController(getApplicationContext());
 
-        ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
-        ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
-
-        okButton = (ImageView) findViewById(R.id.iconOk);
-        applyButton = (ImageView) findViewById(R.id.iconApply);
-        front = (ImageView) findViewById(R.id.frontImView);
-        back = (ImageView) findViewById(R.id.backImView);
-        right =(ImageView) findViewById(R.id.rightImView);
-        left = (ImageView) findViewById(R.id.leftImView);
-        top = (ImageView) findViewById(R.id.topImView);
-        bottom = (ImageView) findViewById(R.id.bottomImView);
-        leftToggleButton = (ToggleButton) findViewById(R.id.leftToggleButton);
-        backToggleButton =(ToggleButton) findViewById(R.id.backToggleButton);
-        frontToggleButton = (ToggleButton) findViewById(R.id.frontToggleButton);
-        topToggleButton = (ToggleButton) findViewById(R.id.topToggleButton);
-        bottomToggleButton = (ToggleButton) findViewById(R.id.bottomToggleButton);
-        rightToggleButton = (ToggleButton) findViewById(R.id.rightToggleButton);
-
-
-
+//        ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
+//        ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
+//
+//        okButton = (ImageView) findViewById(R.id.iconOk);
+//        applyButton = (ImageView) findViewById(R.id.iconApply);
+//        front = (ImageView) findViewById(R.id.frontImView);
+//        back = (ImageView) findViewById(R.id.backImView);
+//        right =(ImageView) findViewById(R.id.rightImView);
+//        left = (ImageView) findViewById(R.id.leftImView);
+//        top = (ImageView) findViewById(R.id.topImView);
+//        bottom = (ImageView) findViewById(R.id.bottomImView);
+//        leftToggleButton = (ToggleButton) findViewById(R.id.leftToggleButton);
+//        backToggleButton =(ToggleButton) findViewById(R.id.backToggleButton);
+//        frontToggleButton = (ToggleButton) findViewById(R.id.frontToggleButton);
+//        topToggleButton = (ToggleButton) findViewById(R.id.topToggleButton);
+//        bottomToggleButton = (ToggleButton) findViewById(R.id.bottomToggleButton);
+//        rightToggleButton = (ToggleButton) findViewById(R.id.rightToggleButton);
+//
+//
+//
         leftToggleButton.setOnClickListener(this);
         backToggleButton.setOnClickListener(this);
         frontToggleButton.setOnClickListener(this);
@@ -111,13 +137,13 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
         rightToggleButton.setOnClickListener(this);
         applyButton.setOnClickListener(this);
         okButton.setOnClickListener(this);
-
-        front.setOnClickListener(this);
-        back.setOnClickListener(this);
-        right.setOnClickListener(this);
-        left.setOnClickListener(this);
-        top.setOnClickListener(this);
-        bottom.setOnClickListener(this);
+//
+//        front.setOnClickListener(this);
+//        back.setOnClickListener(this);
+//        right.setOnClickListener(this);
+//        left.setOnClickListener(this);
+//        top.setOnClickListener(this);
+//        bottom.setOnClickListener(this);
 
         imageController.addCubeSideImageViews(new ImageView[]{
                 front,
@@ -186,6 +212,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
 
     }
+
+
 
     @Override
     public void onClick(View view) {
