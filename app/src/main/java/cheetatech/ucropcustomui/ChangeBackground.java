@@ -3,24 +3,17 @@ package cheetatech.ucropcustomui;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.media.Image;
-
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.graphics.BitmapCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -41,37 +34,43 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.backgroundactivity.BackView;
 import cheetatech.ucropcustomui.backgroundactivity.BackgroundPresenter;
 import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 import cheetatech.ucropcustomui.controllers.ImageController;
-import cheetatech.ucropcustomui.controllers.IntChange;
-import cheetatech.ucropcustomui.controllers.onChangeBackground;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
-import cheetatech.ucropcustomui.gallery.ImageHub;
 
 public class ChangeBackground extends BaseActivity implements View.OnClickListener , BackView {
+
+
+
+    @BindView(R.id.iconOk) ImageView iconOk;
+    @BindView(R.id.fabCamera) ImageView fabCamera;
+    @BindView(R.id.fabGallery) ImageView fabGallery;
+    @BindView(R.id.backgroundImView) ImageView backgroundImageView;
+    @BindView(R.id.galleryLayout) LinearLayout galleryLayout;
+
 
 
     private static final String TAG = "ChangeBackgroun";
 
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
-    private ImageView backgroundImageView = null;
 
     private Uri mUri = null;
-    private String mCurrentPhotoPath = null;
     public static String cubeBackgroundPath = "cube_background.png";
 
-    private boolean isImage = false;
 
-    private ImageController imageController = null;
+
 
     private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
 
-    private LinearLayout galleryLayout = null;
+
 
 
     private BackgroundPresenter presenter = null;
@@ -82,6 +81,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_background);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -89,34 +89,14 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
             presenter = new BackgroundPresenter(getApplicationContext(),this);
         }
 
-
-
-
-
         loadElements();
-        loadGallery();
 
     }
-
-    private void loadGallery()
-    {
-
-    }
-
     private void loadElements()
     {
-
-        galleryLayout = (LinearLayout) findViewById(R.id.galleryLayout);
-
-
-        ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
-        ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
-        backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        ((ImageView)findViewById(R.id.iconOk)).setOnClickListener(this);
 
         presenter.init();
-
         presenter.loadBackground();
     }
 
@@ -127,34 +107,27 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         presenter.loadBackground();
     }
 
+
+    @OnClick(R.id.fabGallery) void openGallery(){
+        pickFromGallery();
+    }
+    @OnClick(R.id.fabCamera) void openCamera(){
+        pickFromCamera();
+    }
+    @OnClick(R.id.iconOk) void saveImages(){
+        saveImage();
+        onBackPressed();
+    }
+
+
     @Override
     public void onClick(View view) {
-
-        switch (view.getId())
-        {
-            case R.id.fabCamera:
-                pickFromCamera();
-                break;
-            case R.id.fabGallery:
-                pickFromGallery();
-                break;
-            case R.id.backgroundImView:
-
-                break;
-            case R.id.iconOk:
-                // background imgesi kabul edilecek....
-                saveImage();
-                onBackPressed();
-                break;
-        }
-
         for(int i=0; i<this.models.size(); i++) {
             if(view.getId() == this.models.get(i).getId()) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
                 presenter.setSelectedImageModel(this.models.get(i));
             }
         }
-
     }
 
     private void saveImage() {
@@ -166,10 +139,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else{
 
-            Bitmap bitmap = presenter.getCurrentBitmap();//imageController.getCurrentBitmap();//controller.getBitmap(controller.getSelectedIndex());
+            Bitmap bitmap = presenter.getCurrentBitmap();
             File pictureFile = FileUtilz.getOutputMediaFile(getApplicationContext(),cubeBackgroundPath);
-
-
             if(pictureFile == null)
             {
                 Log.e(TAG,"Error creating media file , check permissions...");
@@ -263,9 +234,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
 
-        //FileUtilz.getOutputMediaFile(getApplicationContext(),"camera_crop_image.png");
-        //UCrop uCrop = UCrop.of(uri, Uri.fromFile(FileUtilz.getOutputMediaFile(getApplicationContext(),"camera_crop_image.png")));
-
 
         uCrop = basisConfig(uCrop);
         uCrop = advancedConfig(uCrop);
@@ -285,8 +253,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
 
@@ -364,7 +330,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
      * */
     private UCrop basisConfig(@NonNull UCrop uCrop) {
 
-        uCrop = uCrop.withAspectRatio(1, 1);
+        uCrop = uCrop.withAspectRatio(9, 16);
         return uCrop;
     }
 
@@ -388,12 +354,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         final Uri resultUri = UCrop.getOutput(result);
         if (resultUri != null) {
             saveCroppedImage(resultUri);
-            //CropResult.startWithUri(ChangeBackground.this, resultUri);
-            //ChangeBackground.startWithUri(ChangeBackground.this, resultUri);
-            Log.e("TAG","result uri "+ resultUri.getPath());
-
-
-            //imageController.loadBitmap(this.backgroundImageView,mUri);
         } else {
             Toast.makeText(ChangeBackground.this, R.string.toast_cannot_retrieve_cropped_image, Toast.LENGTH_SHORT).show();
         }
