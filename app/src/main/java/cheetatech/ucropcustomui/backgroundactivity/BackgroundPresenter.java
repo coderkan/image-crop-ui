@@ -45,8 +45,8 @@ public class BackgroundPresenter {
             imageModels.add(imageController.getImageModel(bitmap));
             Log.e("TAG","Bitmaps " + imageModels.get(i++).getIndex());
         }
-        //this.view.onLoadGalleryViews(imageModels);
-        //this.view.onSetClickListeners(imageModels);
+        this.view.onLoadGalleryViews(imageModels);
+        this.view.onSetClickListeners(imageModels);
     }
 
 
@@ -59,5 +59,11 @@ public class BackgroundPresenter {
     public void setSelectedImageModel(ImageModel selectedImageModel) {
         this.currentBitmap = selectedImageModel.getBitmap();
         this.view.onLoadBackgroundImage(this.currentBitmap);
+    }
+    public Bitmap getCurrentBitmap(){
+        return this.currentBitmap;
+    }
+    public void setCurrentBitmap(Bitmap bitmap){
+        this.currentBitmap = bitmap;
     }
 }

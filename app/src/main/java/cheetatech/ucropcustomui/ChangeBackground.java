@@ -117,25 +117,14 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
         presenter.init();
 
-        //presenter.loadBackground();
-
-        /*
-        imageController.setBackgroundImageView(backgroundImageView);
-
-        imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
-        imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());*/
+        presenter.loadBackground();
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        //imageController.loadBackgroundImage(); // current bitmap load
-        //presenter.loadBackground();
-        ////imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
-        ////imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
-        //imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
-        //imageController.loadBitmap(this.backgroundImageView,mUri);
+        presenter.loadBackground();
     }
 
     @Override
@@ -163,21 +152,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
             if(view.getId() == this.models.get(i).getId()) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
                 presenter.setSelectedImageModel(this.models.get(i));
-                ///backgroundImageView.setImageBitmap(controller.getBitmap(i));
-                ///imageController.setCurrentBitmap(controller.getBitmap(i));
-                ///controller.setSelectedIndex(i);
             }
         }
-
-//        for(int i=0; i<idList.size(); i++) {
-//            if(view.getId() == idList.get(i)) {
-//                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
-//
-//                backgroundImageView.setImageBitmap(controller.getBitmap(i));
-//                imageController.setCurrentBitmap(controller.getBitmap(i));
-//                controller.setSelectedIndex(i);
-//            }
-//        }
 
     }
 
@@ -190,12 +166,16 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else{
 
-            Bitmap bitmap = imageController.getCurrentBitmap();//controller.getBitmap(controller.getSelectedIndex());
+            Bitmap bitmap = presenter.getCurrentBitmap();//imageController.getCurrentBitmap();//controller.getBitmap(controller.getSelectedIndex());
             File pictureFile = FileUtilz.getOutputMediaFile(getApplicationContext(),cubeBackgroundPath);
+
+
             if(pictureFile == null)
             {
                 Log.e(TAG,"Error creating media file , check permissions...");
-                return;
+                pictureFile = FileUtilz.getOutputMediaFileAndCreate(getApplicationContext(),cubeBackgroundPath);
+                if(pictureFile == null)
+                    return;
             }
             try{
                 FileOutputStream fos = new FileOutputStream(pictureFile);

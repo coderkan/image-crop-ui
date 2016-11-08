@@ -38,6 +38,34 @@ public class FileUtilz {
         return nfile;
     }
 
+    public static File getOutputMediaFileAndCreate(Context context,String mImageName){
+
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + context.getApplicationContext().getPackageName()
+                + "/Files");
+
+
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+
+        if(!mediaFile.exists())
+        {
+            try {
+                mediaFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return mediaFile;
+    }
+
     public static File getOutputMediaFile(Context context,String mImageName){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.

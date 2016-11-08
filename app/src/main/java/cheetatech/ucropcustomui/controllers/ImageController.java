@@ -96,7 +96,7 @@ public class ImageController {
     {
         Bitmap[] bitmaps = new Bitmap[30];
         for(int i = 0; i < 30; i++){
-            String path = Side.cubeSidePath[i];
+            String path = Side.cubeSidePath[0];
             File pictureFile = FileUtilz.getOutputMediaFile(context, path);
 
             Bitmap bitmap = null;
