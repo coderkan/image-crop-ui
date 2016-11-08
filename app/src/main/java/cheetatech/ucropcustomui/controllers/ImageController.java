@@ -9,6 +9,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.yalantis.ucrop.task.BitmapCropTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import cheetatech.ucropcustomui.ChangeBackground;
+import cheetatech.ucropcustomui.R;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 
 /**
@@ -43,6 +47,46 @@ public class ImageController {
         this.context = context;
     }
 
+
+    public Bitmap getBackgroundBitmap()
+    {
+        File pictureFile = FileUtilz.getOutputMediaFile(context, ChangeBackground.cubeBackgroundPath);
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        if(pictureFile == null)
+        {
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1);
+            Log.e("TAG","Error Load BackgroundImage : NULL");
+        }else{
+            bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        }
+        return bitmap;
+    }
+    public Bitmap[] getBitmapsCubeSidesFromPicture()
+    {
+        Bitmap[] bitmaps = new Bitmap[6];
+        for(int i = 0; i < 6; i++){
+            String path = Side.cubeSidePath[i];
+            File pictureFile = FileUtilz.getOutputMediaFile(context, path);
+
+            Bitmap bitmap = null;
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            if(pictureFile == null)
+            {
+                bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im2);
+                Log.e("TAG","Error Load CubeSides : NULL");
+            }else{
+                bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+            }
+            bitmaps[i] = bitmap;
+        }
+        return bitmaps;
+    }
+
     public void setBackgroundImageView(ImageView imageView)
     {
         this.backgroundImageView = imageView;
@@ -51,27 +95,21 @@ public class ImageController {
     {
         File pictureFile = FileUtilz.getOutputMediaFile(context, ChangeBackground.cubeBackgroundPath);
 
-        if(pictureFile == null)
-            Log.e("TAG","Error Load BackgroundImage : NULL");
+        Bitmap bitmap = null;
+
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
-
+        if(pictureFile == null)
+        {
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1);
+            Log.e("TAG","Error Load BackgroundImage : NULL");
+        }else{
+            bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        }
         this.backgroundImageView.setImageBitmap(bitmap);
     }
 
-    public Bitmap getBackgroundBitmap(){
-        File pictureFile = FileUtilz.getOutputMediaFile(context, ChangeBackground.cubeBackgroundPath);
-
-        if(pictureFile == null)
-            Log.e("TAG","Error Load BackgroundImage : NULL");
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
-        return bitmap;
-    }
 
     public void addCubeSideImageViews(ImageView[] imageViews)
     {
@@ -147,15 +185,20 @@ public class ImageController {
             String path = Side.cubeSidePath[i];
             File pictureFile = FileUtilz.getOutputMediaFile(context, path);
 
-            if(pictureFile == null)
-                Log.e("TAG","Error Load BackgroundImage : NULL");
+            Bitmap bitmap = null;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+
+            if(pictureFile == null)
+            {
+                bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im2);
+                Log.e("TAG","Error Load CubeSides : NULL");
+            }else{
+                bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+            }
             this.cubeSideImageViews[i].setImageBitmap(bitmap);
         }
-
     }
 
     public void saveCubeSidesImage()

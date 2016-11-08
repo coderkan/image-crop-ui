@@ -13,24 +13,42 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.mainactivities.MainPresenter;
+import cheetatech.ucropcustomui.mainactivities.MainView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements MainView{
 
-    public static Bitmap DefaultBitmap;
+    @BindView(R.id.backgroundIconChange) ImageView backgroundIconChange;
+    @BindView(R.id.cubeBackgroundChange) ImageView cubeBackgroundChange;
+    @BindView(R.id.frontImView) ImageView frontImView;
+    @BindView(R.id.backImView) ImageView backImView;
+    @BindView(R.id.leftImView) ImageView leftImView;
+    @BindView(R.id.rightImView) ImageView rightImView;
+    @BindView(R.id.topImView) ImageView topImView;
+    @BindView(R.id.bottomImView) ImageView bottomImView;
+    @BindView(R.id.backgroundImView) ImageView backgroundImView;
 
-    private ImageController imageController = null;
+    private ImageView[] views = null;
+
+
+    private MainPresenter presenter = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
+        views = new ImageView[]{frontImView,backImView,leftImView,rightImView,topImView,bottomImView};
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        if(imageController == null)
-            imageController = new ImageController(getApplicationContext());
-
+        if(presenter == null)
+            presenter = new MainPresenter(getApplicationContext(),this);
         loadElements();
 
     }
@@ -39,35 +57,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        imageController.loadBackgroundImage();
-        imageController.loadAllBitmapCubeSideFromPicture();
+        loadElements();
 
     }
 
     private void loadElements()
     {
-        ((ImageView)findViewById(R.id.backgroundIconChange)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.cubeBackgroundChange)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.frontImView)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.backImView)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.leftImView)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.rightImView)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.topImView)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.bottomImView)).setOnClickListener(this);
-        ((ImageView)findViewById(R.id.backgroundImView)).setOnClickListener(this);
-
-        imageController.setBackgroundImageView((ImageView)findViewById(R.id.backgroundImView));
-
-        imageController.loadBackgroundImage();
-        imageController.addCubeSideImageViews(new ImageView[]{
-                ((ImageView)findViewById(R.id.frontImView)),
-                ((ImageView)findViewById(R.id.backImView)),
-                ((ImageView)findViewById(R.id.leftImView)),
-                ((ImageView)findViewById(R.id.rightImView)),
-                ((ImageView)findViewById(R.id.topImView)),
-                ((ImageView)findViewById(R.id.bottomImView))
-        });
-        imageController.loadAllBitmapCubeSideFromPicture();
+        presenter.loadBackground();
+        presenter.loadCubeImages();
     }
 
 
@@ -94,41 +91,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+
+
+
+    @OnClick(R.id.backgroundIconChange) void clickBackgroundImageChange(){
+        Toast.makeText(getApplicationContext(),"click Apply Icon",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ChangeBackground.class);
+        startActivity(intent);
+    }
+    @OnClick(R.id.cubeBackgroundChange) void clickCubeBackgroundImageChange(){
+        Toast.makeText(getApplicationContext(),"click Background Icon",Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, BackgroundActivity.class));
+        //startActivity(new Intent(this, ChangeCube.class));
+    }
+
+
+
+
+
     @Override
-    public void onClick(View view) {
-        switch (view.getId())
-        {
-            case R.id.backgroundIconChange:
-                Intent intent = new Intent(this, ChangeBackground.class);
-                startActivity(intent);
-                break;
+    public void onLoadBackground(Bitmap bitmap) {
+        backgroundImView.setImageBitmap(bitmap);
+    }
 
+    @Override
+    public void onLoadCubeSides(Bitmap[] bitmaps) {
+        for(int i = 0; i < this.views.length; i++)
+            this.views[i].setImageBitmap(bitmaps[i]);
+    }
 
-            case R.id.cubeBackgroundChange :
-                startActivity(new Intent(this, BackgroundActivity.class));
-                //startActivity(new Intent(this, ChangeCube.class));
-                break;
-            case R.id.frontImView :
+    @Override
+    public void onLoadCubeSide(Bitmap bitmap) {
 
-                break;
-            case R.id.backImView :
-
-                break;
-            case R.id.leftImView :
-
-                break;
-            case R.id.rightImView :
-
-                break;
-            case R.id.topImView :
-
-                break;
-            case R.id.bottomImView :
-
-                break;
-            case R.id.backgroundImView :
-
-                break;
-        }
     }
 }
