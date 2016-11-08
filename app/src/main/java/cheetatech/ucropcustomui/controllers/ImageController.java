@@ -8,7 +8,10 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.yalantis.ucrop.task.BitmapCropTask;
@@ -20,7 +23,9 @@ import java.io.IOException;
 
 import cheetatech.ucropcustomui.ChangeBackground;
 import cheetatech.ucropcustomui.R;
+import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
+import cheetatech.ucropcustomui.gallery.ViewIdGenerator;
 
 /**
  * Created by erkan on 31.10.2016.
@@ -86,6 +91,58 @@ public class ImageController {
         }
         return bitmaps;
     }
+
+    public Bitmap[] getAllGalleryFile()
+    {
+        Bitmap[] bitmaps = new Bitmap[30];
+        for(int i = 0; i < 30; i++){
+            String path = Side.cubeSidePath[i];
+            File pictureFile = FileUtilz.getOutputMediaFile(context, path);
+
+            Bitmap bitmap = null;
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            if(pictureFile == null)
+            {
+                int[] ints = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
+                bitmap = BitmapFactory.decodeResource(this.context.getResources(), ints[i%6]);
+                Log.e("TAG","Error Load CubeSides : NULL");
+            }else{
+                bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+            }
+            bitmaps[i] = bitmap;
+        }
+        return bitmaps;
+    }
+
+    public ImageModel getImageModel(Bitmap bitmap)
+    {
+        ImageModel imageModel = new ImageModel();
+        LinearLayout linearLayout = new LinearLayout(this.context);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(250,250));
+        linearLayout.setGravity(Gravity.CENTER);
+
+        ImageView imageView = new ImageView(this.context);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(220,220));
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageBitmap(bitmap);
+
+        int uniqueId = ViewIdGenerator.generateViewId();
+        imageView.setId(uniqueId);
+        linearLayout.addView(imageView);
+
+        imageModel.setIndex(ImageModel.counter++);
+        imageModel.setId(uniqueId);
+        imageModel.setBitmap(bitmap);
+        imageModel.setView(linearLayout);
+
+        Log.e("TAG","Id ler : " + uniqueId + " index : "+ ImageModel.counter);
+        return imageModel;
+    }
+
+
 
     public void setBackgroundImageView(ImageView imageView)
     {

@@ -42,6 +42,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import cheetatech.ucropcustomui.activitys.BaseActivity;
+import cheetatech.ucropcustomui.backgroundactivity.BackView;
+import cheetatech.ucropcustomui.backgroundactivity.BackgroundPresenter;
+import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 import cheetatech.ucropcustomui.controllers.ImageController;
 import cheetatech.ucropcustomui.controllers.IntChange;
 import cheetatech.ucropcustomui.controllers.onChangeBackground;
@@ -49,7 +52,7 @@ import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 import cheetatech.ucropcustomui.gallery.ImageHub;
 
-public class ChangeBackground extends BaseActivity implements View.OnClickListener {
+public class ChangeBackground extends BaseActivity implements View.OnClickListener , BackView {
 
 
     private static final String TAG = "ChangeBackgroun";
@@ -68,8 +71,11 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
 
+    private LinearLayout galleryLayout = null;
 
 
+    private BackgroundPresenter presenter = null;
+    private ArrayList<ImageModel> models = new ArrayList<ImageModel>();
 
 
     @Override
@@ -79,11 +85,13 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if(presenter == null){
+            presenter = new BackgroundPresenter(getApplicationContext(),this);
+        }
 
 
 
-        if(imageController == null)
-            imageController = new ImageController(getApplicationContext());
+
 
         loadElements();
         loadGallery();
@@ -92,49 +100,30 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     private void loadGallery()
     {
-        int[] images = new int[]{
-                R.drawable.im1,
-                R.drawable.im2 ,
-                R.drawable.im3,
-                R.drawable.im4,
-                R.drawable.im5,
-                R.drawable.im6,
-                R.drawable.im7,
-                R.drawable.im8,
-                R.drawable.im9,
-                R.drawable.im10,
-                R.drawable.im11
-        };
-        ImageHub imageHub = new ImageHub();
-        imageHub.add(images);
-
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.galleryLayout);
-
-        controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
-
-        controller.loadImages();
-
-        idList = controller.getIdList();
-
-        for(int i=0; i<idList.size(); i++) {
-            ((ImageView)findViewById(idList.get(i))).setOnClickListener(this);
-        }
-
 
     }
 
     private void loadElements()
     {
+
+        galleryLayout = (LinearLayout) findViewById(R.id.galleryLayout);
+
+
         ((FloatingActionButton) findViewById(R.id.fabCamera)).setOnClickListener(this);
         ((FloatingActionButton) findViewById(R.id.fabGallery)).setOnClickListener(this);
         backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         ((ImageView)findViewById(R.id.iconOk)).setOnClickListener(this);
 
+        presenter.init();
+
+        //presenter.loadBackground();
+
+        /*
         imageController.setBackgroundImageView(backgroundImageView);
 
         imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
-        imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
+        imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());*/
     }
 
     @Override
@@ -142,8 +131,9 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     {
         super.onResume();
         //imageController.loadBackgroundImage(); // current bitmap load
-        imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
-        imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
+        //presenter.loadBackground();
+        ////imageController.setCurrentBitmap(imageController.getBackgroundBitmap());
+        ////imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
         //imageController.loadBitmap(backgroundImageView,imageController.getCurrentBitmap());
         //imageController.loadBitmap(this.backgroundImageView,mUri);
     }
@@ -169,14 +159,25 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                 break;
         }
 
-        for(int i=0; i<idList.size(); i++) {
-            if(view.getId() == idList.get(i)) {
+        for(int i=0; i<this.models.size(); i++) {
+            if(view.getId() == this.models.get(i).getId()) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
-                backgroundImageView.setImageBitmap(controller.getBitmap(i));
-                imageController.setCurrentBitmap(controller.getBitmap(i));
-                controller.setSelectedIndex(i);
+                presenter.setSelectedImageModel(this.models.get(i));
+                ///backgroundImageView.setImageBitmap(controller.getBitmap(i));
+                ///imageController.setCurrentBitmap(controller.getBitmap(i));
+                ///controller.setSelectedIndex(i);
             }
         }
+
+//        for(int i=0; i<idList.size(); i++) {
+//            if(view.getId() == idList.get(i)) {
+//                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
+//
+//                backgroundImageView.setImageBitmap(controller.getBitmap(i));
+//                imageController.setCurrentBitmap(controller.getBitmap(i));
+//                controller.setSelectedIndex(i);
+//            }
+//        }
 
     }
 
@@ -490,5 +491,28 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                 .setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
                 .setAutoCancel(true);
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(DOWNLOAD_NOTIFICATION_ID_DONE, mNotification.build());
+    }
+
+    @Override
+    public void onLoadGalleryViews(ArrayList<ImageModel> models) {
+        for (ImageModel model:models
+             ) {
+            this.galleryLayout.addView(model.getView());
+        }
+    }
+
+    @Override
+    public void onSetClickListeners(ArrayList<ImageModel> models) {
+        this.models.clear();
+        for (ImageModel model: models
+             ) {
+            this.models.add(model);
+            ((ImageView)findViewById(model.getId())).setOnClickListener(this);
+        }
+    }
+
+    @Override
+    public void onLoadBackgroundImage(Bitmap bitmap) {
+        backgroundImageView.setImageBitmap(bitmap);
     }
 }
