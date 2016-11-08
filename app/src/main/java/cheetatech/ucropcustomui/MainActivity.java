@@ -1,6 +1,7 @@
 package cheetatech.ucropcustomui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,7 +17,10 @@ import cheetatech.ucropcustomui.controllers.ImageController;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
+    public static Bitmap DefaultBitmap;
+
     private ImageController imageController = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             case R.id.cubeBackgroundChange :
-                //startActivity(new Intent(this, BackgroundActivity.class));
-                startActivity(new Intent(this, ChangeCube.class));
+                startActivity(new Intent(this, BackgroundActivity.class));
+                //startActivity(new Intent(this, ChangeCube.class));
                 break;
             case R.id.frontImView :
 

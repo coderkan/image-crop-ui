@@ -2,6 +2,7 @@ package cheetatech.ucropcustomui.fileutil;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +60,14 @@ public class FileUtilz {
         File mediaFile;
         //String mImageName="MI_"+ timeStamp +".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-        return mediaFile;
+
+        if(mediaFile.exists())
+        {
+            Log.e("TAG","File is exists");
+            return mediaFile;
+        }else{
+            return null;
+        }
     }
 
     public static File createImageFile(Context context) throws IOException {
