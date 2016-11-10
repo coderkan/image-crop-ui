@@ -102,23 +102,28 @@ public class ImageController {
         Bitmap[] bitmaps = new Bitmap[6];
         for(int i = 0; i < 6; i++){
             String path = Side.cubeSidePath[i];
-            int[] rand = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
             File pictureFile = FileUtilz.getOutMediaFile(context, path);
             if(!pictureFile.exists())
-                save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), rand[i++%6]));
+            {
+                int[] ints = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
+                Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), ints[i%6]);
+                save(pictureFile,bitmap_);
+            }
 
             pictureFile = FileUtilz.getOutMediaFile(context,path);
             Bitmap bitmap = null;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inSampleSize=8;
 
             if(!pictureFile.exists())
             {
                 bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im3);
-                Log.e("TAG","Error Load CubeSides : NULL");
+
             }else{
                 bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+                Log.e("TAG","Path is "+ pictureFile.getAbsolutePath());
             }
             bitmaps[i] = bitmap;
         }

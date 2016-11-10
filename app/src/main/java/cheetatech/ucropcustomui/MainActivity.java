@@ -155,7 +155,7 @@ public class MainActivity extends BaseActivity implements MainView{
 
     @Override
     public void onLoadBackground(Bitmap bitmap) {
-        Toast.makeText(getApplicationContext(),"backgroundddd",Toast.LENGTH_SHORT).show();
+
         backgroundImView.setImageBitmap(bitmap);
     }
 
