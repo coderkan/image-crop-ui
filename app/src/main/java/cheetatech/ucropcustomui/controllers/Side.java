@@ -15,12 +15,12 @@ public class Side {
 
 
     public static String[] cubeSidePath = new String[]{
-            "cube_side_front.png",
-            "cube_side_back.png",
-            "cube_side_left.png",
-            "cube_side_right.png",
-            "cube_side_top.png",
-            "cube_side_bottom.png"
+            "cube_side_front.jpg",
+            "cube_side_back.jpg",
+            "cube_side_left.jpg",
+            "cube_side_right.jpg",
+            "cube_side_top.jpg",
+            "cube_side_bottom.jpg"
     };
 
 }

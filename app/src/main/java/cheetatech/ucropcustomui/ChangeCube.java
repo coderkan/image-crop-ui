@@ -126,26 +126,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
     private void loadElements()
     {
-
-
         presenter.loadElements();
         presenter.loadCubeSideImages();
-
-//        if(imageController == null)
-//            imageController = new ImageController(getApplicationContext());
-//
-//
-//
-//
-//        bottom.setSelected(true);
-//
-//        cubeSidesController = new CubeSidesController(
-//                new ToggleButton[]{frontToggleButton,backToggleButton,leftToggleButton,rightToggleButton,topToggleButton,bottomToggleButton},
-//                new ImageView[]{front,back,left,right,top,bottom}
-//                );
-//
-//        frontToggleButton.setChecked(true);
-//        cubeSidesController.controlToggleButtons(frontToggleButton.getId());
     }
 
     private void loadGallery()
@@ -154,47 +136,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         getIndexAndToggle(R.id.frontToggleButton);
         presenter.setCurrentIndex(0);
-
-//        backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
-//        backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//
-//
-//        imageController.loadBitmap(backgroundImageView, Side.FRONT);
-//
-//
-//        int[] images = new int[]{
-//                R.drawable.im1,
-//                R.drawable.im2 ,
-//                R.drawable.im3,
-//                R.drawable.im4,
-//                R.drawable.im5,
-//                R.drawable.im6,
-//                R.drawable.im7,
-//                R.drawable.im8,
-//                R.drawable.im9,
-//                R.drawable.im10,
-//                R.drawable.im11
-//        };
-//        ImageHub imageHub = new ImageHub();
-//        imageHub.add(images);
-//
-//        ((HorizontalScrollView) findViewById(R.id.horizontalScroll)).setOnClickListener(this);
-//        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.galleryLayout);
-//        linearLayout.setOnClickListener(this);
-//
-//        controller = new GalleryController(getApplicationContext(),imageHub,linearLayout);
-//
-//        controller.loadImages();
-//
-//        idList = controller.getIdList();
-//
-//        for(int i=0; i<idList.size(); i++) {
-//            ((ImageView)findViewById(idList.get(i))).setOnClickListener(this);
-//        }
-
-
-
-
     }
 
     @OnClick(R.id.fabCamera) public void clickCamera(){
@@ -208,7 +149,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     @OnClick(R.id.iconOk)
     public void clickOkButton(){
         presenter.setCubeSideBitmap();
-        //cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
     }
 
     @OnClick(R.id.iconApply)
@@ -267,11 +207,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
             }
         }
     }
-
-
-
-
-
 
     //
     private void pickFromGallery()
@@ -358,23 +293,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".png",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
-
-
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data)
     {
@@ -424,7 +342,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     private void startCropActivity(@NonNull Uri uri) {
         Toast.makeText(ChangeCube.this, uri.toString(), Toast.LENGTH_SHORT).show();
         String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
-        destinationFileName += ".png";
+        destinationFileName += ".jpg";
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
@@ -444,10 +362,12 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     private UCrop advancedConfig(@NonNull UCrop uCrop) {
         UCrop.Options options = new UCrop.Options();
 
-        options.setCompressionFormat(Bitmap.CompressFormat.PNG);
+        options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
         options.setCompressionQuality(90);
         options.setHideBottomControls(false);
         options.setFreeStyleCropEnabled(false);
+        options.withMaxResultSize(512,512);
+        options.setMaxBitmapSize(512*512);
 
         return uCrop.withOptions(options);
     }

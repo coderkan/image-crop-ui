@@ -20,8 +20,8 @@ public class BaseActivity extends AppCompatActivity {
     public static final int REQUEST_SELECT_PICTURE = 0x01;
     public static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
     public static final String SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME = "SampleCropBackgroundImage";
-    public static final String SAMPLE_CROPPED_CUBESIDE_IMAGE_NAME = "SampleCropCubeSideImage.png";
-    public static final String CUBESIDE_BACKGROUND_IMAGE_NAME = "cube_side_background.png";
+    public static final String SAMPLE_CROPPED_CUBESIDE_IMAGE_NAME = "SampleCropCubeSideImage.jpg";
+    public static final String CUBESIDE_BACKGROUND_IMAGE_NAME = "cube_side_background.jpg";
     private AlertDialog mAlertDialog;
 
     /**

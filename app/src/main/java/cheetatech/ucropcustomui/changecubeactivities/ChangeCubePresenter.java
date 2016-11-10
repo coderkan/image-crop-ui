@@ -92,7 +92,7 @@ public class ChangeCubePresenter {
     }
 
     public void loadCroppedImageFromCamera() {
-        Bitmap bitmap = controller.getBitmap(BaseActivity.CUBESIDE_BACKGROUND_IMAGE_NAME);
+        Bitmap bitmap = controller.getBitmap(BaseActivity.CUBESIDE_BACKGROUND_IMAGE_NAME,512,512,1);
         this.currentBitmap = bitmap;
         this.view.onLoadBackgroundImage(bitmap);
     }

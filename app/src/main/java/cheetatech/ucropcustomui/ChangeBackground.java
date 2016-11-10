@@ -63,7 +63,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private ArrayList<Integer> idList = new ArrayList<Integer>();
 
     private Uri mUri = null;
-    public static String cubeBackgroundPath = "cube_background.png";
+    public static String cubeBackgroundPath = "cube_background.jpg";
 
 
 
@@ -143,16 +143,18 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
             Bitmap bitmap = presenter.getCurrentBitmap();
             File pictureFile = FileUtilz.getOutputMediaFile(getApplicationContext(),cubeBackgroundPath);
-            if(pictureFile == null)
+            if(!pictureFile.exists())
             {
-                Log.e(TAG,"Error creating media file , check permissions...");
-                pictureFile = FileUtilz.getOutputMediaFileAndCreate(getApplicationContext(),cubeBackgroundPath);
-                if(pictureFile == null)
-                    return;
+
+//
+//                Log.e(TAG,"Error creating media file , check permissions...");
+//                pictureFile = FileUtilz.getOutputMediaFileAndCreate(getApplicationContext(),cubeBackgroundPath);
+//                if(pictureFile == null)
+//                    return;
             }
             try{
                 FileOutputStream fos = new FileOutputStream(pictureFile);
-                bitmap.compress(Bitmap.CompressFormat.PNG,90,fos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
                 fos.flush();
                 fos.close();
             }catch (FileNotFoundException e){
@@ -231,7 +233,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         Uri uri = mUri;
         Toast.makeText(ChangeBackground.this, "Uri Uri "+uri.toString(), Toast.LENGTH_SHORT).show();
         String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
-        destinationFileName += ".png";
+        destinationFileName += ".jpg";
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
@@ -302,7 +304,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     private void startCropActivity(@NonNull Uri uri) {
         String destinationFileName = SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME;
-        destinationFileName += ".png";
+        destinationFileName += ".jpg";
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
         uCrop = basisConfig(uCrop);
@@ -331,11 +333,12 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private UCrop advancedConfig(@NonNull UCrop uCrop) {
         UCrop.Options options = new UCrop.Options();
 
-        options.setCompressionFormat(Bitmap.CompressFormat.PNG);
+        options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
         options.setCompressionQuality(90);
         options.setHideBottomControls(false);
         options.setFreeStyleCropEnabled(false);
 
+        options.withMaxResultSize(1080,1920);
         return uCrop.withOptions(options);
     }
     private void handleCropResult(@NonNull Intent result) {
