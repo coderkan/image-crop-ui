@@ -1,21 +1,66 @@
 package cheetatech.ucropcustomui.fileutil;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.PortUnreachableException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import cheetatech.ucropcustomui.controllers.Side;
 
 /**
  * Created by erkan on 31.10.2016.
  */
 
 public class FileUtilz {
+
+
+
+
+
+
+    public static void copyFileToDestination(Context context,String src,String dest) throws Exception {
+        File srcFile = FileUtilz.getOutMediaFile(context, src); //new File(downloadsDirectoryPath, filename);
+        File dstFile = FileUtilz.getOutMediaFile(context, dest); //new File(downloadsDirectoryPath, filename);
+
+        FileInputStream inStream = new FileInputStream(srcFile);
+        FileOutputStream outStream = new FileOutputStream(dstFile);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+    }
+
+
+    public static String accomplish(String s1, String s2){
+        return s1 + File.separator + s2;
+    }
+
+    public static boolean directoryControl(Context context,String path){
+        File dir = null;
+        File rootFile = getRootFile(context);
+        if(rootFile != null){
+            dir = new File(rootFile.getAbsolutePath() + File.separator + path);
+            if(!dir.exists()){
+                if(!dir.mkdirs()){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 
 
@@ -138,7 +183,7 @@ public class FileUtilz {
         return image;
     }
 
-    public List<File> getListFiles(File parentDir){
+    public static List<File> getListFiles(File parentDir){
 
         ArrayList<File> inFiles = new ArrayList<>();
         File[] files = parentDir.listFiles();
@@ -148,7 +193,7 @@ public class FileUtilz {
             if(file.isDirectory()){
                 inFiles.addAll(getListFiles(file));
             }else{
-                if(file.getName().endsWith(".png"))
+                if(file.getName().endsWith(".jpg"))
                     inFiles.add(file);
             }
         }

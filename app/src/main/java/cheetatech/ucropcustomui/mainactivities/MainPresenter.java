@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.controllers.Side;
 
 /**
  * Created by erkan on 08.11.2016.
@@ -35,12 +36,12 @@ public class MainPresenter {
 
     public void loadBackground()
     {
-        Bitmap bitmap = imageController.getBackgroundBitmap();
+        Bitmap bitmap = imageController.getBackgroundBitmap(Side.CUBE1);
         this.view.onLoadBackground(bitmap);
     }
 
     public void loadCubeImages(){
-        Bitmap[] bitmaps = imageController.getBitmapsCubeSidesFromPicture();
+        Bitmap[] bitmaps = imageController.getBitmapsCubeSidesFromPictureInDirectory(Side.CUBE1); // imageController.getBitmapsCubeSidesFromPicture();
         this.view.onLoadCubeSides(bitmaps);
     }
 

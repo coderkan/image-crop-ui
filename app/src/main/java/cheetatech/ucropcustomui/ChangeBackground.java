@@ -42,6 +42,7 @@ import cheetatech.ucropcustomui.backgroundactivity.BackView;
 import cheetatech.ucropcustomui.backgroundactivity.BackgroundPresenter;
 import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.controllers.Side;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.GalleryController;
 
@@ -142,7 +143,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         }else{
 
             Bitmap bitmap = presenter.getCurrentBitmap();
-            File pictureFile = FileUtilz.getOutputMediaFile(getApplicationContext(),cubeBackgroundPath);
+            File pictureFile = FileUtilz.getOutputMediaFile( getApplicationContext(),FileUtilz.accomplish(Side.CUBE1,cubeBackgroundPath));
             if(!pictureFile.exists())
             {
 
@@ -389,7 +390,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         String downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         String filename = String.format("%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
 
-        File saveFile = FileUtilz.getOutputMediaFile(getApplicationContext(), ChangeBackground.cubeBackgroundPath); //new File(downloadsDirectoryPath, filename);
+        String npath = FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND/*ChangeBackground.cubeBackgroundPath*/);
+        File saveFile = FileUtilz.getOutputMediaFile(getApplicationContext(), npath); //new File(downloadsDirectoryPath, filename);
 
         FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
         FileOutputStream outStream = new FileOutputStream(saveFile);

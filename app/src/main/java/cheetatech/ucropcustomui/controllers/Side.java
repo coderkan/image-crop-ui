@@ -1,10 +1,19 @@
 package cheetatech.ucropcustomui.controllers;
 
+import cheetatech.ucropcustomui.ChangeBackground;
+
 /**
  * Created by erkan on 01.11.2016.
  */
 
 public class Side {
+
+
+    public static String CUBE1 = "Cube1";
+    public static String BACKGROUND = "BackgroundImages";
+    public static String BACKGROUNDPATH = ChangeBackground.cubeBackgroundPath;
+    public static String REF_BACKGROUND = "ref_background.jpg";
+    public static String REF_CUBESIDE = "ref_cube_side.jpg";
 
     public static int FRONT = 0;
     public static int BACK = 1;

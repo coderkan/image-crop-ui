@@ -4,9 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.controllers.Side;
+import cheetatech.ucropcustomui.fileutil.FileUtilz;
 
 /**
  * Created by erkan on 08.11.2016.
@@ -34,7 +37,7 @@ public class BackgroundPresenter {
     }
 
     public void init(){
-        Bitmap[] bitmaps = imageController.getAllGalleryFile();
+        Bitmap[] bitmaps = imageController.getAllGalleryFile(Side.BACKGROUND);
         if(bitmaps == null)
             Log.e("TAG","Bitmaps are NULL");
         this.imageModels.clear();
@@ -45,13 +48,21 @@ public class BackgroundPresenter {
             imageModels.add(imageController.getImageModel(bitmap));
             Log.e("TAG","Bitmaps " + imageModels.get(i++).getIndex());
         }
+        try {
+            FileUtilz.copyFileToDestination(this.context,
+                    FileUtilz.accomplish(Side.CUBE1,Side.BACKGROUNDPATH),
+                    FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND)
+                    );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.view.onLoadGalleryViews(imageModels);
         this.view.onSetClickListeners(imageModels);
     }
 
 
     public void loadBackground() {
-        Bitmap bitmap = imageController.getBackgroundBitmap();
+        Bitmap bitmap = imageController.getBackgroundBitmapInDirectory(Side.CUBE1);//imageController.getBackgroundBitmap();
         this.currentBitmap = bitmap;
         this.view.onLoadBackgroundImage(bitmap);
     }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import cheetatech.ucropcustomui.ChangeBackground;
 import cheetatech.ucropcustomui.R;
@@ -114,6 +115,72 @@ public class ImageController {
 
     }
 
+
+    /***
+     * Get directory path
+     * and get in background image
+     * if not create it
+     *
+     * @param path
+     * @return
+     */
+
+    public Bitmap getBackgroundBitmap(String path)
+    {
+        boolean isDir = FileUtilz.directoryControl(this.context,path);
+        if(!isDir)
+            Log.e("TAG","Create Directory Error");
+
+
+        String filePath = FileUtilz.accomplish(path,ChangeBackground.cubeBackgroundPath);
+        File pictureFile = FileUtilz.getOutMediaFile(context, filePath);
+        if(!pictureFile.exists()){
+            save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1));
+        }
+        pictureFile = FileUtilz.getOutMediaFile(context, filePath);
+
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        if(!pictureFile.exists())
+        {
+            Log.e("TAG","Error Load BackgroundImage : NULL");
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1);
+
+        }else{
+            bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        }
+        return bitmap;
+    }
+
+
+    public Bitmap getBackgroundBitmapInDirectory(String directory)
+    {
+        FileUtilz.directoryControl(this.context,directory);
+
+        String npath = FileUtilz.accomplish(directory,Side.REF_BACKGROUND/*ChangeBackground.cubeBackgroundPath*/);
+
+        File pictureFile = FileUtilz.getOutMediaFile(context, npath);
+        if(!pictureFile.exists()){
+            save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1));
+        }
+        pictureFile = FileUtilz.getOutMediaFile(context, npath);
+
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inJustDecodeBounds = false;
+        if(!pictureFile.exists())
+        {
+            Log.e("TAG","Error Load BackgroundImage : NULL");
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1);
+
+        }else{
+            bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+        }
+        return bitmap;
+    }
+
     public Bitmap getBackgroundBitmap()
     {
         File pictureFile = FileUtilz.getOutMediaFile(context, ChangeBackground.cubeBackgroundPath);
@@ -135,6 +202,47 @@ public class ImageController {
         }
         return bitmap;
     }
+
+
+    public Bitmap[] getBitmapsCubeSidesFromPictureInDirectory(String rootPath)
+    {
+
+        FileUtilz.directoryControl(this.context,rootPath);
+
+        Bitmap[] bitmaps = new Bitmap[6];
+        for(int i = 0; i < 6; i++){
+            String mPath = Side.cubeSidePath[i];
+            String path = FileUtilz.accomplish(rootPath,mPath);
+
+            File pictureFile = FileUtilz.getOutMediaFile(context, path);
+            if(!pictureFile.exists())
+            {
+                int[] ints = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
+                Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), ints[i%6]);
+                save(pictureFile,bitmap_);
+            }
+
+            pictureFile = FileUtilz.getOutMediaFile(context,path);
+            Bitmap bitmap = null;
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            //options.inJustDecodeBounds = true;
+            //options.inSampleSize=8;
+
+            if(!pictureFile.exists())
+            {
+                bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im3);
+
+            }else{
+                bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+                Log.e("TAG","Path is "+ pictureFile.getAbsolutePath());
+            }
+            bitmaps[i] = bitmap;
+        }
+        return bitmaps;
+    }
+
     // MainActivity
     public Bitmap[] getBitmapsCubeSidesFromPicture()
     {
@@ -169,7 +277,51 @@ public class ImageController {
         return bitmaps;
     }
 
+    public Bitmap[] getAllGalleryFile(String rootPath)
+    {
 
+        FileUtilz.directoryControl(this.context,rootPath);
+        File file = FileUtilz.getDirectoryInRoot(this.context,rootPath); // get backgroundimages directory
+        List<File> parentFiles = null;
+        if(file.exists())
+            parentFiles = FileUtilz.getListFiles(file);
+
+        Log.e("Files","Files are "+ file.length());
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = 4;
+
+        if(parentFiles != null && parentFiles.size() > 0)
+        {
+            int size = parentFiles.size();
+            Bitmap[] bitmaps = new Bitmap[size];
+
+            for(int i = 0; i < size; i++){
+
+                Bitmap bitmap = null;
+                File f = parentFiles.get(i);
+                if(f.exists())
+                    bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),options);
+                else{
+                    bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1);
+                }
+
+                bitmaps[i] = bitmap;
+            }
+            return bitmaps;
+        }else{
+            int[] b = new int[]{R.drawable.bg1,R.drawable.bg2,R.drawable.bg3,R.drawable.bg4,R.drawable.bg5};
+            Bitmap[] bs = new Bitmap[b.length];
+            for(int j = 0; j < b.length; j++)
+            {
+                Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), b[j],options);
+                bs[j] = bitmap_;
+            }
+            return bs;
+        }
+    }
     // GalleryFiles are Ok
     public Bitmap[] getAllGalleryFile()
     {
