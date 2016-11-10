@@ -16,5 +16,4 @@ public interface BackView {
     void onLoadGalleryViews(ArrayList<ImageModel> models);
     void onSetClickListeners(ArrayList<ImageModel> models);
     void onLoadBackgroundImage(Bitmap bitmap);
-
 }

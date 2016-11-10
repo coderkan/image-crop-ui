@@ -41,6 +41,7 @@ import java.util.jar.Manifest;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.CubeSidesController;
 import cheetatech.ucropcustomui.controllers.ImageController;
@@ -52,10 +53,6 @@ import cheetatech.ucropcustomui.gallery.ImageHub;
 public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
     private static final String TAG = "ChangeCube";
-
-
-
-
 
     @BindView(R.id.fabGallery) FloatingActionButton fabGallery;
     @BindView(R.id.fabCamera) FloatingActionButton fabCamera;
@@ -74,6 +71,10 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
     @BindView(R.id.topToggleButton)ToggleButton topToggleButton ;
     @BindView(R.id.bottomToggleButton)ToggleButton bottomToggleButton ;
     @BindView(R.id.rightToggleButton)ToggleButton rightToggleButton ;
+
+
+
+
 
 
     private GalleryController controller = null;
@@ -129,14 +130,14 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 //
 //
 //
-        leftToggleButton.setOnClickListener(this);
-        backToggleButton.setOnClickListener(this);
-        frontToggleButton.setOnClickListener(this);
-        topToggleButton.setOnClickListener(this);
-        bottomToggleButton.setOnClickListener(this);
-        rightToggleButton.setOnClickListener(this);
-        applyButton.setOnClickListener(this);
-        okButton.setOnClickListener(this);
+//        leftToggleButton.setOnClickListener(this);
+//        backToggleButton.setOnClickListener(this);
+//        frontToggleButton.setOnClickListener(this);
+//        topToggleButton.setOnClickListener(this);
+//        bottomToggleButton.setOnClickListener(this);
+//        rightToggleButton.setOnClickListener(this);
+//        applyButton.setOnClickListener(this);
+//        okButton.setOnClickListener(this);
 //
 //        front.setOnClickListener(this);
 //        back.setOnClickListener(this);
@@ -211,56 +212,47 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener{
 
 
 
+
     }
 
+    @OnClick(R.id.fabCamera) public void clickCamera(){
+        pickFromCamera();
+    }
 
+    @OnClick(R.id.fabGallery) public void clickGallery(){
+        pickFromGallery();
+    }
 
-    @Override
-    public void onClick(View view) {
+    @OnClick(R.id.iconOk)
+    public void clickOkButton(){
+        cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
+    }
 
+    @OnClick(R.id.iconApply)
+    public void clickApplyButton(){
+        saveImage();
+        onBackPressed();
+    }
+
+    @OnClick({R.id.leftToggleButton,R.id.rightToggleButton,R.id.topToggleButton,R.id.bottomToggleButton,R.id.frontToggleButton,R.id.backToggleButton})
+    public void clickToggleButton(View view){
         int id = view.getId();
+        Log.e("TAG","New OnClick Listener");
         if(id == R.id.leftToggleButton || id == R.id.frontToggleButton|| id == R.id.backToggleButton|| id == R.id.rightToggleButton
                 || id == R.id.topToggleButton|| id == R.id.bottomToggleButton)
         {
             cubeSidesController.controlToggleButtons(id);
             imageController.loadBitmap(backgroundImageView,cubeSidesController.getSelectedIndex());
 
-            Toast.makeText(this, "Index "+ cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Indexxxx "+ cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
             return;
         }
+    }
 
 
-        switch (view.getId())
-        {
-            case R.id.iconOk :
-                cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
-                break;
-            case R.id.iconApply:
-                saveImage();
-                onBackPressed();
-                break;
-            case R.id.fabGallery:
-                pickFromGallery();
-                break;
 
-            case R.id.fabCamera:
-                pickFromCamera();
-                break;
-
-            case R.id.frontImView:
-                break;
-            case R.id.backImView:
-                break;
-            case R.id.topImView:
-                break;
-            case R.id.rightImView:
-                break;
-            case R.id.leftImView:
-                break;
-            case R.id.bottomImView:
-                break;
-        }
-
+    @Override
+    public void onClick(View view) {
         for(int i=0; i<idList.size(); i++) {
             if(view.getId() == idList.get(i)) {
                 Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
