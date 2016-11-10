@@ -3,6 +3,7 @@ package cheetatech.ucropcustomui.changecubeactivities;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -82,5 +83,10 @@ public class ChangeCubePresenter {
 
     public void setCubeSideBitmap() {
         this.view.onLoadCubeSideBitmap(this.baseCube.getCurrentIndex(),this.currentBitmap);
+    }
+
+    public void saveCubeSideImage(ImageView[] imageViews) {
+        controller.saveCubeSidesImage(imageViews);
+        this.view.onSavedImage();
     }
 }

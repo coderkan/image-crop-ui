@@ -1,10 +1,13 @@
 package cheetatech.ucropcustomui;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -16,11 +19,12 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.ImageController;
 import cheetatech.ucropcustomui.mainactivities.MainPresenter;
 import cheetatech.ucropcustomui.mainactivities.MainView;
 
-public class MainActivity extends AppCompatActivity implements MainView{
+public class MainActivity extends BaseActivity implements MainView{
 
     @BindView(R.id.backgroundIconChange) ImageView backgroundIconChange;
     @BindView(R.id.cubeBackgroundChange) ImageView cubeBackgroundChange;
@@ -63,11 +67,51 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     private void loadElements()
     {
-        presenter.loadBackground();
-        presenter.loadCubeImages();
+        loadImages();
+        //presenter.loadBackground();
+        //presenter.loadCubeImages();
     }
 
 
+    private void loadImages() {
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    getString(R.string.permission_write_storage_rationale),
+                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
+        }else{
+            //imageController.saveCubeSidesImage();
+            presenter.loadBackground();
+            presenter.loadCubeImages();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case REQUEST_STORAGE_READ_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                }
+                break;
+            case REQUEST_CAMERA_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                }
+            case REQUEST_STORAGE_WRITE_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    presenter.loadBackground();
+                    presenter.loadCubeImages();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+                break;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     @Override
     public void onLoadBackground(Bitmap bitmap) {
+        Toast.makeText(getApplicationContext(),"backgroundddd",Toast.LENGTH_SHORT).show();
         backgroundImView.setImageBitmap(bitmap);
     }
 

@@ -53,34 +53,66 @@ public class ImageController {
     }
 
 
+    public void save(File pictureFile,Bitmap bitmap)
+    {
+            //File pictureFile = FileUtilz.getOutputMediaFile(this.context.getApplicationContext(),path);
+            if(pictureFile == null)
+            {
+                Log.e("TAG","Error creating media file , check permissions...");
+                return;
+            }
+            try{
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG,90,fos);
+                fos.flush();
+                fos.close();
+            }catch (FileNotFoundException e){
+                Log.e("TAG","Error File not found " + e.getMessage());
+            }catch (IOException e){
+                Log.e("TAG","Error accessing file "+ e.getMessage());
+            }
+            Log.e("TAG","Path is "+ pictureFile.toString());
+
+    }
+
     public Bitmap getBackgroundBitmap()
     {
-        File pictureFile = FileUtilz.getOutputMediaFile(context, ChangeBackground.cubeBackgroundPath);
+        File pictureFile = FileUtilz.getOutMediaFile(context, ChangeBackground.cubeBackgroundPath);
+        if(!pictureFile.exists()){
+            save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1));
+        }
+        pictureFile = FileUtilz.getOutMediaFile(context, ChangeBackground.cubeBackgroundPath);
+
         Bitmap bitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        if(pictureFile == null)
+        if(!pictureFile.exists())
         {
-            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1);
             Log.e("TAG","Error Load BackgroundImage : NULL");
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1);
+
         }else{
             bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
         }
         return bitmap;
     }
+    // MainActivity
     public Bitmap[] getBitmapsCubeSidesFromPicture()
     {
         Bitmap[] bitmaps = new Bitmap[6];
         for(int i = 0; i < 6; i++){
             String path = Side.cubeSidePath[i];
-            File pictureFile = FileUtilz.getOutputMediaFile(context, path);
+            File pictureFile = FileUtilz.getOutMediaFile(context, path);
+            if(!pictureFile.exists())
+                save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im3));
 
+            pictureFile = FileUtilz.getOutMediaFile(context,path);
             Bitmap bitmap = null;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-            if(pictureFile == null)
+            if(!pictureFile.exists())
             {
                 bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im3);
                 Log.e("TAG","Error Load CubeSides : NULL");
@@ -317,10 +349,40 @@ public class ImageController {
 
             Log.e("TAG","Path is "+ pictureFile.toString());
         }
+    }
 
 
+    public void saveCubeSidesImage(ImageView[] cubeSideImageViews)
+    {
+        for(int i = 0; i < 6;i++)
+        {
+            String path = Side.cubeSidePath[i];
+            ImageView imageView = cubeSideImageViews[i];
+
+            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+
+            File pictureFile = FileUtilz.getOutputMediaFile(this.context.getApplicationContext(),path);
+            if(pictureFile == null)
+            {
+                Log.e("TAG","Error creating media file , check permissions...");
+                return;
+            }
+            try{
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG,90,fos);
+                fos.flush();
+                fos.close();
+            }catch (FileNotFoundException e){
+                Log.e("TAG","Error File not found " + e.getMessage());
+            }catch (IOException e){
+                Log.e("TAG","Error accessing file "+ e.getMessage());
+            }
+            Log.e("TAG","Path is "+ pictureFile.toString());
+        }
 
     }
+
+
 
     public void setCurrentBitmap(Bitmap bitmap){
         this.currentBitmap = bitmap;

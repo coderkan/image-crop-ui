@@ -223,7 +223,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
             int getIndx = getIndexAndToggle(id);
             presenter.setCurrentIndex(getIndx);
-            //Toast.makeText(this, "Indexxxx " + cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
             return;
         }
     }
@@ -264,14 +263,6 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
                 presenter.setSelectedImageModel(this.models.get(i));
             }
         }
-
-//        for(int i=0; i<idList.size(); i++) {
-//            if(view.getId() == idList.get(i)) {
-//                Toast.makeText(this, "Index "+(i+1), Toast.LENGTH_SHORT).show();
-//                backgroundImageView.setImageBitmap(controller.getBitmap(i));
-//                controller.setSelectedIndex(i);
-//            }
-//        }
     }
 
 
@@ -434,19 +425,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         Toast.makeText(ChangeCube.this, uri.toString(), Toast.LENGTH_SHORT).show();
         String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
         destinationFileName += ".png";
-//        switch (mRadioGroupCompressionSettings.getCheckedRadioButtonId()) {
-////            case R.id.radio_png:
-////                destinationFileName += ".png";
-////                break;
-////            case R.id.radio_jpeg:
-////                destinationFileName += ".jpg";
-////                break;
-//        }
-
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
-
-
 
         uCrop = basisConfig(uCrop);
         uCrop = advancedConfig(uCrop);
@@ -455,22 +435,12 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
     }
 
-    /**
-     *
-     * Aspect Ratio is square
-     * */
     private UCrop basisConfig(@NonNull UCrop uCrop) {
 
         uCrop = uCrop.withAspectRatio(1, 1);
         return uCrop;
     }
 
-    /**
-     * Sometimes you want to adjust more options, it's done via {@link com.yalantis.ucrop.UCrop.Options} class.
-     *
-     * @param uCrop - ucrop builder instance
-     * @return - ucrop builder instance
-     */
     private UCrop advancedConfig(@NonNull UCrop uCrop) {
         UCrop.Options options = new UCrop.Options();
 
@@ -511,7 +481,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
                     getString(R.string.permission_write_storage_rationale),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else{
-            imageController.saveCubeSidesImage();
+            //imageController.saveCubeSidesImage();
+            presenter.saveCubeSideImage(this.cubeSides);
         }
     }
 
@@ -551,4 +522,10 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
             imageView.setImageBitmap(bitmaps[i++]);
         }
     }
+
+    @Override
+    public void onSavedImage() {
+        Log.e("TAG","Saved Images Successfully");
+    }
+
 }
