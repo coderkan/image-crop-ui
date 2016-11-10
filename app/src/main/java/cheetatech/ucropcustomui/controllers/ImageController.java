@@ -79,7 +79,7 @@ public class ImageController {
     {
         File pictureFile = FileUtilz.getOutMediaFile(context, ChangeBackground.cubeBackgroundPath);
         if(!pictureFile.exists()){
-            save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1));
+            save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im5));
         }
         pictureFile = FileUtilz.getOutMediaFile(context, ChangeBackground.cubeBackgroundPath);
 
@@ -89,7 +89,7 @@ public class ImageController {
         if(!pictureFile.exists())
         {
             Log.e("TAG","Error Load BackgroundImage : NULL");
-            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im1);
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im5);
 
         }else{
             bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
@@ -102,9 +102,10 @@ public class ImageController {
         Bitmap[] bitmaps = new Bitmap[6];
         for(int i = 0; i < 6; i++){
             String path = Side.cubeSidePath[i];
+            int[] rand = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
             File pictureFile = FileUtilz.getOutMediaFile(context, path);
             if(!pictureFile.exists())
-                save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im3));
+                save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), rand[i++%6]));
 
             pictureFile = FileUtilz.getOutMediaFile(context,path);
             Bitmap bitmap = null;
@@ -124,19 +125,31 @@ public class ImageController {
         return bitmaps;
     }
 
+
+    // GalleryFiles are Ok
     public Bitmap[] getAllGalleryFile()
     {
         Bitmap[] bitmaps = new Bitmap[10];
         for(int i = 0; i < 10; i++){
             String path = Side.cubeSidePath[0];
-            File pictureFile = FileUtilz.getOutputMediaFile(context, path);
+            String refpath = "reference_image_"+i+".png";
+            File pictureFile = FileUtilz.getOutMediaFile(context, refpath);
+
+            if(!pictureFile.exists())
+            {
+                int[] ints = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
+                Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), ints[i%6]);
+                save(pictureFile,bitmap_);
+            }
+
+            pictureFile = FileUtilz.getOutMediaFile(context, refpath);
 
             Bitmap bitmap = null;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-            if(pictureFile == null)
+            if(!pictureFile.exists())
             {
                 int[] ints = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
                 bitmap = BitmapFactory.decodeResource(this.context.getResources(), ints[i%6]);
