@@ -82,7 +82,7 @@ public class ImageController {
 
             if(pictureFile == null)
             {
-                bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im2);
+                bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im3);
                 Log.e("TAG","Error Load CubeSides : NULL");
             }else{
                 bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
@@ -94,8 +94,8 @@ public class ImageController {
 
     public Bitmap[] getAllGalleryFile()
     {
-        Bitmap[] bitmaps = new Bitmap[30];
-        for(int i = 0; i < 30; i++){
+        Bitmap[] bitmaps = new Bitmap[10];
+        for(int i = 0; i < 10; i++){
             String path = Side.cubeSidePath[0];
             File pictureFile = FileUtilz.getOutputMediaFile(context, path);
 
@@ -116,6 +116,33 @@ public class ImageController {
         }
         return bitmaps;
     }
+
+    public Bitmap[] getAllBitmapCubeSideFromPicture()
+    {
+
+        Bitmap[] bitmaps = new Bitmap[6];
+        for(int i = 0; i < 6; i++){
+            String path = Side.cubeSidePath[i];
+            File pictureFile = FileUtilz.getOutputMediaFile(context, path);
+
+            Bitmap bitmap = null;
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            if(pictureFile == null)
+            {
+                bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im2);
+                Log.e("TAG","Error Load CubeSides : NULL");
+            }else{
+                bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
+            }
+            bitmaps[i] = bitmap;
+        }
+        return bitmaps;
+    }
+
+
 
     public ImageModel getImageModel(Bitmap bitmap)
     {

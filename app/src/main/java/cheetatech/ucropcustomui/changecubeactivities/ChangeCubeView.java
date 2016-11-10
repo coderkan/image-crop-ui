@@ -10,4 +10,7 @@ import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 
 public interface ChangeCubeView extends BackView {
 
+    void onLoadCubeSideBitmap(int side,Bitmap bitmap);
+    void onLoadCubeSides(Bitmap[] bitmaps);
+
 }
