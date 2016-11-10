@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
+import cheetatech.ucropcustomui.controllers.BaseCube;
 import cheetatech.ucropcustomui.controllers.ImageController;
 
 /**
@@ -21,6 +22,8 @@ public class ChangeCubePresenter {
     private Context context = null;
 
     private ImageController controller = null;
+
+    private BaseCube baseCube = null;
 
     public ChangeCubePresenter(){}
 
@@ -37,6 +40,9 @@ public class ChangeCubePresenter {
     private void init(){
         if(controller == null)
             controller = new ImageController(this.context);
+
+        if(baseCube == null)
+            baseCube = new BaseCube();
 
         Bitmap[] bitmaps = controller.getAllGalleryFile();
         if(bitmaps == null)
@@ -59,11 +65,22 @@ public class ChangeCubePresenter {
     }
     public void loadCubeSideImages(){
         Bitmap[] bitmaps = controller.getBitmapsCubeSidesFromPicture();
+        baseCube.addBitmap(bitmaps);
         this.view.onLoadCubeSides(bitmaps);
     }
 
     public void setSelectedImageModel(ImageModel selectedImageModel) {
         this.currentBitmap = selectedImageModel.getBitmap();
         this.view.onLoadBackgroundImage(this.currentBitmap);
+    }
+
+    public void setCurrentIndex(int getIndx) {
+        this.baseCube.setCurrentIndex(getIndx);
+        this.currentBitmap = this.baseCube.getBitmap(getIndx);
+        this.view.onLoadBackgroundImage(this.baseCube.getBitmap(getIndx));
+    }
+
+    public void setCubeSideBitmap() {
+        this.view.onLoadCubeSideBitmap(this.baseCube.getCurrentIndex(),this.currentBitmap);
     }
 }

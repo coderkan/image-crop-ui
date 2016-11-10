@@ -37,9 +37,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.jar.Manifest;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
@@ -74,6 +76,10 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     @BindView(R.id.topToggleButton)ToggleButton topToggleButton ;
     @BindView(R.id.bottomToggleButton)ToggleButton bottomToggleButton ;
     @BindView(R.id.rightToggleButton)ToggleButton rightToggleButton ;
+
+
+    @BindViews({R.id.frontToggleButton,R.id.backToggleButton,R.id.leftToggleButton,R.id.rightToggleButton,R.id.topToggleButton,R.id.bottomToggleButton})
+    List<ToggleButton> listToggleButtons;
 
     @BindView(R.id.galleryLayout) LinearLayout galleryLayout;
     @BindView(R.id.backgroundImView) ImageView backgroundImageView;
@@ -143,7 +149,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     {
 
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
+        getIndexAndToggle(R.id.frontToggleButton);
+        presenter.setCurrentIndex(0);
 
 //        backgroundImageView = ((ImageView)findViewById(R.id.backgroundImView));
 //        backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -197,7 +204,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
     @OnClick(R.id.iconOk)
     public void clickOkButton(){
-        cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
+        presenter.setCubeSideBitmap();
+        //cubeSidesController.getCurrentImageView().setImageBitmap(controller.getBitmap(controller.getSelectedIndex()));
     }
 
     @OnClick(R.id.iconApply)
@@ -212,14 +220,40 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         Log.e("TAG","New OnClick Listener");
         if(id == R.id.leftToggleButton || id == R.id.frontToggleButton|| id == R.id.backToggleButton|| id == R.id.rightToggleButton
                 || id == R.id.topToggleButton|| id == R.id.bottomToggleButton) {
-            cubeSidesController.controlToggleButtons(id);
-            imageController.loadBitmap(backgroundImageView, cubeSidesController.getSelectedIndex());
 
-            Toast.makeText(this, "Indexxxx " + cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
+            int getIndx = getIndexAndToggle(id);
+            presenter.setCurrentIndex(getIndx);
+            //Toast.makeText(this, "Indexxxx " + cubeSidesController.getSelectedIndex(), Toast.LENGTH_SHORT).show();
             return;
         }
     }
 
+
+
+    private int getIndex(int id){
+        int i = 0;
+        for ( ToggleButton toggleButton: listToggleButtons
+        ) {
+            if(id == toggleButton.getId())
+                return i;
+            i++;
+        }
+        return 0;
+    }
+    private int getIndexAndToggle(int id){
+        int i = 0;
+        int index = 0;
+        for ( ToggleButton toggleButton: listToggleButtons
+                ) {
+            if(id == toggleButton.getId()){
+                index = i;
+                toggleButton.setChecked(true);
+            }else
+                toggleButton.setChecked(false);
+            i++;
+        }
+        return index;
+    }
 
 
     @Override
@@ -239,6 +273,8 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 //            }
 //        }
     }
+
+
 
 
 
@@ -504,7 +540,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
     @Override
     public void onLoadCubeSideBitmap(int side, Bitmap bitmap) {
-
+        this.cubeSides[side].setImageBitmap(bitmap);
     }
 
     @Override

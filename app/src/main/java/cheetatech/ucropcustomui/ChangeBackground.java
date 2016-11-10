@@ -130,6 +130,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         }
     }
 
+
+
     private void saveImage() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
