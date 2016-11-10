@@ -31,11 +31,14 @@ import android.widget.ToggleButton;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.jar.Manifest;
@@ -305,7 +308,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
             File photoFile = null;
             try{
-                photoFile = createImageFile();
+                photoFile = FileUtilz.createImageFile(getApplicationContext());
             }catch (IOException e){
                 Toast.makeText(ChangeCube.this, "ErrorCreateImageFile", Toast.LENGTH_SHORT).show();
             }
@@ -407,12 +410,9 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     private void startCropActivityFromCamera(/*@NonNull Uri uri*/) {
         Uri uri = mUri;
         Toast.makeText(ChangeCube.this, "Uri Uri "+uri.toString(), Toast.LENGTH_SHORT).show();
-        String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
-        destinationFileName += ".png";
+        String destinationFileName = SAMPLE_CROPPED_CUBESIDE_IMAGE_NAME;
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
-
-
 
         uCrop = basisConfig(uCrop);
         uCrop = advancedConfig(uCrop);
@@ -454,10 +454,51 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     private void handleCropResult(@NonNull Intent result) {
         final Uri resultUri = UCrop.getOutput(result);
         if (resultUri != null) {
-            CropResult.startWithUri(ChangeCube.this, resultUri);
+            saveCroppedImage(resultUri);
+            presenter.loadCroppedImageFromCamera();
+            //CropResult.startWithUri(ChangeCube.this, resultUri);
         } else {
             Toast.makeText(ChangeCube.this, R.string.toast_cannot_retrieve_cropped_image, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void saveCroppedImage(Uri uri) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    getString(R.string.permission_write_storage_rationale),
+                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
+        } else {
+            Uri imageUri = uri;//getIntent().getData();
+            if (imageUri != null && imageUri.getScheme().equals("file")) {
+                try {
+                    copyFileToDownloads(imageUri);
+
+                } catch (Exception e) {
+                    Toast.makeText(ChangeCube.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, imageUri.toString(), e);
+                }
+            } else {
+                Toast.makeText(ChangeCube.this, getString(R.string.toast_unexpected_error), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
+
+        File saveFile = FileUtilz.getOutMediaFile(getApplicationContext(), CUBESIDE_BACKGROUND_IMAGE_NAME); //new File(downloadsDirectoryPath, filename);
+
+        FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
+        FileOutputStream outStream = new FileOutputStream(saveFile);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+
+        File file = new File(croppedFileUri.getPath());
+        if(file != null)
+            file.delete();
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")

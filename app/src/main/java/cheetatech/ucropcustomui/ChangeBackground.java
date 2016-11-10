@@ -244,20 +244,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".png",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        return image;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
@@ -413,27 +399,9 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         File file = new File(croppedFileUri.getPath());
         if(file != null)
             file.delete();
-
-        showNotification(saveFile);
     }
 
-    private void showNotification(@NonNull File file) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.fromFile(file), "image/*");
 
-        NotificationCompat.Builder mNotification = new NotificationCompat.Builder(this);
-
-        mNotification
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.notification_image_saved_click_to_preview))
-                .setTicker(getString(R.string.notification_image_saved))
-                .setSmallIcon(R.drawable.ic_icon_ok)
-                .setOngoing(false)
-                .setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
-                .setAutoCancel(true);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(DOWNLOAD_NOTIFICATION_ID_DONE, mNotification.build());
-    }
 
     @Override
     public void onLoadGalleryViews(ArrayList<ImageModel> models) {

@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import cheetatech.ucropcustomui.ChangeBackground;
 import cheetatech.ucropcustomui.R;
+import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.gallery.ViewIdGenerator;
@@ -50,6 +51,24 @@ public class ImageController {
     public ImageController(Context context)
     {
         this.context = context;
+    }
+
+
+    public Bitmap getBitmap(String path){
+        File saveFile = FileUtilz.getOutputMediaFile(this.context, path);
+        if(!saveFile.exists())
+        {
+            Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.im6);
+            save(saveFile,bitmap_);
+        }
+
+        saveFile = FileUtilz.getOutputMediaFile(this.context, BaseActivity.CUBESIDE_BACKGROUND_IMAGE_NAME);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        
+        Bitmap bitmap = BitmapFactory.decodeFile(saveFile.getAbsolutePath(),options);
+        return bitmap;
     }
 
 

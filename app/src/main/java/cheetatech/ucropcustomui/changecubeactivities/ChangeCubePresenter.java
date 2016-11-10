@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.backgroundactivity.ImageModel;
 import cheetatech.ucropcustomui.controllers.BaseCube;
 import cheetatech.ucropcustomui.controllers.ImageController;
@@ -88,5 +89,11 @@ public class ChangeCubePresenter {
     public void saveCubeSideImage(ImageView[] imageViews) {
         controller.saveCubeSidesImage(imageViews);
         this.view.onSavedImage();
+    }
+
+    public void loadCroppedImageFromCamera() {
+        Bitmap bitmap = controller.getBitmap(BaseActivity.CUBESIDE_BACKGROUND_IMAGE_NAME);
+        this.currentBitmap = bitmap;
+        this.view.onLoadBackgroundImage(bitmap);
     }
 }

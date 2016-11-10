@@ -13,13 +13,15 @@ import cheetatech.ucropcustomui.R;
  */
 public class BaseActivity extends AppCompatActivity {
 
-    protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
-    protected static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
-    protected static final int REQUEST_CAMERA_ACCESS_PERMISSION = 103;
-    protected static final int REQUEST_START_CAMERA_APP = 0x02;
-    protected static final int REQUEST_SELECT_PICTURE = 0x01;
-    protected static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
-    protected static final String SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME = "SampleCropBackgroundImage";
+    public static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
+    public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
+    public static final int REQUEST_CAMERA_ACCESS_PERMISSION = 103;
+    public static final int REQUEST_START_CAMERA_APP = 0x02;
+    public static final int REQUEST_SELECT_PICTURE = 0x01;
+    public static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
+    public static final String SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME = "SampleCropBackgroundImage";
+    public static final String SAMPLE_CROPPED_CUBESIDE_IMAGE_NAME = "SampleCropCubeSideImage.png";
+    public static final String CUBESIDE_BACKGROUND_IMAGE_NAME = "cube_side_background.png";
     private AlertDialog mAlertDialog;
 
     /**
