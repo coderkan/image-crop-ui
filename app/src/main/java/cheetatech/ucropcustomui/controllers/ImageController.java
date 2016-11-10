@@ -142,10 +142,11 @@ public class ImageController {
         Bitmap bitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inSampleSize = 2;
         if(!pictureFile.exists())
         {
             Log.e("TAG","Error Load BackgroundImage : NULL");
-            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1);
+            bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1,options);
 
         }else{
             bitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath(),options);
@@ -291,7 +292,7 @@ public class ImageController {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         options.inJustDecodeBounds = false;
-        options.inSampleSize = 4;
+        options.inSampleSize = 8;
 
         if(parentFiles != null && parentFiles.size() > 0)
         {
