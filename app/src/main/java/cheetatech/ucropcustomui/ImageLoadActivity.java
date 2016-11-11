@@ -7,13 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cheetatech.ucropcustomui.adapters.MyAdapter;
+import cheetatech.ucropcustomui.controllers.Side;
+import cheetatech.ucropcustomui.fileutil.FileUtilz;
 
 public class ImageLoadActivity extends AppCompatActivity {
 
@@ -38,12 +42,19 @@ public class ImageLoadActivity extends AppCompatActivity {
         for(int i = 0; i < 20; i++)
             list.add("Erkan " + i);
 
+        ArrayList<File> fileList = (ArrayList<File>) FileUtilz.getListFiles(getApplicationContext(), Side.BACKGROUND);
+
+        for (File file: fileList
+             ) {
+            Log.e("TAG","Name "+ file.getAbsolutePath().toString());
+        }
+
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new MyAdapter(list);
+        mAdapter = new MyAdapter(fileList);
         mRecyclerView.setAdapter(mAdapter);
 
 

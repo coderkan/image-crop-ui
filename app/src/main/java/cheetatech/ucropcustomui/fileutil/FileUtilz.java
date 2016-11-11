@@ -200,7 +200,7 @@ public class FileUtilz {
         return inFiles;
     }
 
-    public List<File> getListFiles(Context context,String parentName){
+    public static List<File> getListFiles(Context context,String parentName){
 
         File parentDir = getDirectoryInRoot(context,parentName);
 
@@ -212,7 +212,7 @@ public class FileUtilz {
             if(file.isDirectory()){
                 inFiles.addAll(getListFiles(file));
             }else{
-                if(file.getName().endsWith(".png"))
+                if(file.getName().endsWith(".jpg"))
                     inFiles.add(file);
             }
         }
