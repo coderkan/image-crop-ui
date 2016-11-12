@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,11 +31,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,23 +146,55 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
     }
 
     public void loadImage(){
-        String url = models.get(0).getUrl();
-        Picasso.with(this).load(url).into(loadImageView);
+        if(models.size() > 0){
+            StorageReference imagesRef = storageRef.child("images");
+            Log.e(TAG,"imagesRef Path: "+ imagesRef.getPath() + " name : "+ imagesRef.getName());
+
+            String filename = models.get(0).getFileName();
+            StorageReference spaceRef = imagesRef.child(filename);
+            Log.e(TAG,"spacesRef Path: "+ spaceRef.getPath() + " name : "+ spaceRef.getName());
+
+            StorageReference imRef = imagesRef.child(filename);
+
+            File localFile = null;
+
+            localFile = FileUtilz.getOutMediaFile(this,"erkanimagedownload.jpg");
+
+            final File finalLocalFile = localFile;
+            imRef.getFile(finalLocalFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.e(TAG,"OnSuccess Download File "+ finalLocalFile.getAbsolutePath().toString() );
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG,"Error onFailure Download Image");
+                }
+            });
+
+
+            String url = models.get(0).getUrl();
+            Picasso.with(this).load(url).into(loadImageView);
+        }else{
+            Picasso.with(this).load(R.drawable.bg4).into(loadImageView);
+        }
+
     }
 
     private void controlStorage() {
 
-//        storage = FirebaseStorage.getInstance();
-//        if(storage == null)
-//            Log.e(TAG,"storage null");
-//        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
-//        if(storageRef == null)
-//            Log.e(TAG,"storage REF null");
-//
-//        StorageReference reference = storageRef.child("images");
-//
-//        if(reference == null)
-//            Log.e(TAG,"REF null");
+        storage = FirebaseStorage.getInstance();
+        if(storage == null)
+            Log.e(TAG,"storage null");
+        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
+        if(storageRef == null)
+            Log.e(TAG,"storage REF null");
+
+        StorageReference reference = storageRef.child("images");
+
+        if(reference == null)
+            Log.e(TAG,"REF null");
 
 
         //        storage = FirebaseStorage.getInstance();
@@ -364,7 +400,8 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
             FirebaseModel model = new FirebaseModel();
             model.setName(data.getValue(FirebaseModel.class).getName());
             model.setUrl(data.getValue(FirebaseModel.class).getUrl());
-            Log.e(TAG,model.getName() + " // // "+ model.getUrl());
+            model.setFileName(data.getValue(FirebaseModel.class).getFileName());
+            Log.e(TAG,model.getName() + " :: FileName :: " + model.getFileName() + " // // "+ model.getUrl());
             models.add(model);
         }
     }
