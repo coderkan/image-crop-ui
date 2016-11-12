@@ -10,6 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -28,6 +32,15 @@ public class ImageLoadActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager  mLayoutManager;
 
+
+    private FirebaseAuth mAuth;
+    private FirebaseStorage storage = null;
+    private StorageReference storageRef = null;
+
+    public static String BUCKETPATH = "gs://fir-storageexample-15b35.appspot.com";
+
+
+    private String TAG = "ImageLoadActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +49,25 @@ public class ImageLoadActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        mAuth = FirebaseAuth.getInstance();
+
+        storage = FirebaseStorage.getInstance();
+        if(storage == null)
+            Log.e(TAG,"storage null");
+        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
+        if(storageRef == null)
+            Log.e(TAG,"storage REF null");
+
+        StorageReference reference = storageRef.child("images");
+
+        if(reference == null)
+            Log.e(TAG,"REF null");
+
+
+
+
 
 
         ArrayList<String> list = new ArrayList<String>();

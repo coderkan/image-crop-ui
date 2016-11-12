@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1037368319040",
+    "firebase_url": "https://fir-storageexample-15b35.firebaseio.com",
+    "project_id": "fir-storageexample-15b35",
+    "storage_bucket": "fir-storageexample-15b35.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037368319040:android:c53e06bfe0e3452f",
+        "android_client_info": {
+          "package_name": "cheetatech.ucropcustomui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037368319040-2nt2d0s3p5fi6mad5vbbtdhnhthbjvrk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvk9oNuXlWEO6ntXyRTlN5vu5wqu2jo_8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
