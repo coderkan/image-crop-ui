@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +51,9 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
 
     @BindView(R.id.my_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.web_imageview)
+    ImageView loadImageView;
+
 
 
     private int j = 0;
@@ -67,6 +72,7 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
 
     public static String BUCKETPATH = "gs://fir-storageexample-15b35.appspot.com";
 
+    private ArrayList<FirebaseModel> models = new ArrayList<FirebaseModel>();
 
     private String TAG = "ImageLoadActivity";
     @Override
@@ -80,6 +86,7 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
 
         controlAuth();
 
+        controlStorage();
 
 //        storage = FirebaseStorage.getInstance();
 //        if(storage == null)
@@ -124,13 +131,47 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
             @Override
             public void onClick(View view) {
 
-                addFireBase();
+                loadImage();
+                //addFireBase();
                 //signIn();
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    public void loadImage(){
+        String url = models.get(0).getUrl();
+        Picasso.with(this).load(url).into(loadImageView);
+    }
+
+    private void controlStorage() {
+
+//        storage = FirebaseStorage.getInstance();
+//        if(storage == null)
+//            Log.e(TAG,"storage null");
+//        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
+//        if(storageRef == null)
+//            Log.e(TAG,"storage REF null");
+//
+//        StorageReference reference = storageRef.child("images");
+//
+//        if(reference == null)
+//            Log.e(TAG,"REF null");
+
+
+        //        storage = FirebaseStorage.getInstance();
+//        if(storage == null)
+//            Log.e(TAG,"storage null");
+//        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
+//        if(storageRef == null)
+//            Log.e(TAG,"storage REF null");
+//
+//        StorageReference reference = storageRef.child("images");
+//
+//        if(reference == null)
+//            Log.e(TAG,"REF null");
     }
 
     private void signIn(){
@@ -317,13 +358,14 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
     private void getUpdates(DataSnapshot ds)
     {
         Log.e(TAG,"UPDATES");
+        models.clear();
         for(DataSnapshot data : ds.getChildren())
         {
             FirebaseModel model = new FirebaseModel();
             model.setName(data.getValue(FirebaseModel.class).getName());
             model.setUrl(data.getValue(FirebaseModel.class).getUrl());
             Log.e(TAG,model.getName() + " // // "+ model.getUrl());
-
+            models.add(model);
         }
     }
 }
