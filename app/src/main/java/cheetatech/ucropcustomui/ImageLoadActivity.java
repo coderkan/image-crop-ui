@@ -1,9 +1,15 @@
 package cheetatech.ucropcustomui;
 
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,25 +23,35 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cheetatech.ucropcustomui.adapters.MyAdapter;
 import cheetatech.ucropcustomui.controllers.Side;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
+import cheetatech.ucropcustomui.firebase.FirebaseModel;
 
-public class ImageLoadActivity extends AppCompatActivity {
+public class ImageLoadActivity extends AppCompatActivity  implements ChildEventListener{
 
 
     @BindView(R.id.my_recycler_view)
     RecyclerView mRecyclerView;
 
 
+    private int j = 0;
 
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager  mLayoutManager;
@@ -43,6 +59,9 @@ public class ImageLoadActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth = null;
     private FirebaseAuth.AuthStateListener mAuthListener = null;
+
+    private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
+
     private FirebaseStorage storage = null;
     private StorageReference storageRef = null;
 
@@ -55,7 +74,7 @@ public class ImageLoadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_load);
         ButterKnife.bind(this);
-
+        checkAndRequestPermissions();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -105,6 +124,7 @@ public class ImageLoadActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                addFireBase();
                 //signIn();
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -147,22 +167,7 @@ public class ImageLoadActivity extends AppCompatActivity {
 
         signIn();
 
-//        mAuth.signInAnonymously()
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        Log.e(TAG,"signInAnonymously:onComplete: "+ task.isSuccessful());
-//                        if(!task.isSuccessful()){
-//                            Log.e(TAG,"signInAnonymously",task.getException());
-//                            Toast.makeText(ImageLoadActivity.this, "Authentication failed.",
-//                                    Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-
-
-
-
+        root.addChildEventListener(this);
     }
 
     @Override
@@ -177,4 +182,148 @@ public class ImageLoadActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
     }
 
+
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        Log.d("TAG", "Permission callback called-------");
+        switch (requestCode) {
+            case 3: {
+
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
+                //perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);*/
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+                        //&& perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                            ) {
+                        Log.d("TAG", "sms & location services permission granted");
+                        // process the normal flow
+                        //else any one or both the permissions are not granted
+                    } else {
+                        Log.d("TAG", "Some permissions are not granted ask again ");
+                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+//                        // shouldShowRequestPermissionRationale will return true
+                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.INTERNET)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_NETWORK_STATE)
+                            // || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
+                                ) {
+                            showDialogOK("Internet and Phone State Permission required for this app",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    checkAndRequestPermissions();
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    // proceed with logic by disabling the related features or quit the app.
+                                                    break;
+                                            }
+                                        }
+                                    });
+                        }
+                        //permission is denied (and never ask again is  checked)
+                        //shouldShowRequestPermissionRationale will return false
+                        else {
+                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+                                    .show();
+                            //                            //proceed with logic by disabling the related features or quit the app.
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+                .show();
+    }
+
+    private  boolean checkAndRequestPermissions() {
+
+        if(Build.VERSION.SDK_INT >= 23) {
+            int permissionInternet = ContextCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET);
+            int permissionAccessNetworkState = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE);
+            List<String> listPermissionsNeeded = new ArrayList<>();
+            if (permissionInternet != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.INTERNET);
+            }
+            if (permissionAccessNetworkState != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(android.Manifest.permission.ACCESS_NETWORK_STATE);
+            }
+
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 3);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// Firebase Database interfaces...
+
+
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        getUpdates(dataSnapshot);
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        getUpdates(dataSnapshot);
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+        getUpdates(dataSnapshot);
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
+    }
+
+    private void addFireBase() {
+        String nm = "Image " + (j);
+        String url = "URL " + (j++);
+        FirebaseModel user = new FirebaseModel(nm,url);
+        root.child("ModelPaths").push().setValue(user);
+    }
+
+    private void getUpdates(DataSnapshot ds)
+    {
+        Log.e(TAG,"UPDATES");
+        for(DataSnapshot data : ds.getChildren())
+        {
+            FirebaseModel model = new FirebaseModel();
+            model.setName(data.getValue(FirebaseModel.class).getName());
+            model.setUrl(data.getValue(FirebaseModel.class).getUrl());
+            Log.e(TAG,model.getName() + " // // "+ model.getUrl());
+
+        }
+    }
 }
