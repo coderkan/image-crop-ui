@@ -152,9 +152,14 @@ public class MainActivity extends BaseActivity implements MainView{
 
     }
     @OnClick(R.id.cubeBackgroundChange) void clickCubeBackgroundImageChange(){
+
+
         Toast.makeText(getApplicationContext(),"click Background Icon",Toast.LENGTH_SHORT).show();
-        //startActivity(new Intent(this, BackgroundActivity.class));
-        startActivity(new Intent(this, ChangeCube.class));
+        startActivity(new Intent(this, CardActivity.class));
+
+//        Toast.makeText(getApplicationContext(),"click Background Icon",Toast.LENGTH_SHORT).show();
+//        //startActivity(new Intent(this, BackgroundActivity.class));
+//        startActivity(new Intent(this, ChangeCube.class));
     }
 
 
