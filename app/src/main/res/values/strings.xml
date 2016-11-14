@@ -57,4 +57,5 @@
     <string name="title_activity_background">BackgroundActivity</string>
     <string name="title_activity_image_load">ImageLoadActivity</string>
     <string name="title_activity_card">CardActivity</string>
+    <string name="title_activity_show">ShowActivity</string>
 </resources>

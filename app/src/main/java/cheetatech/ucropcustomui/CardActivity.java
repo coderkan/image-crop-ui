@@ -1,6 +1,7 @@
 package cheetatech.ucropcustomui;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,11 +13,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -47,9 +46,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cheetatech.ucropcustomui.adapters.MyCardAdapter;
-import cheetatech.ucropcustomui.controllers.Side;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.firebase.FirebaseModel;
+import cheetatech.ucropcustomui.firebase.FirebaseParcel;
 import cheetatech.ucropcustomui.utils.RecyclerItemClickListener;
 
 public class CardActivity extends AppCompatActivity  implements ChildEventListener{
@@ -62,6 +61,8 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
 
 
     ArrayList<String> fileList = new ArrayList<String>();
+    ArrayList<FirebaseParcel> parcelList = new ArrayList<FirebaseParcel>();
+
 
     private int j = 0;
 
@@ -123,6 +124,18 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"indeximiz "+ position, Toast.LENGTH_SHORT).show();
+
+                FirebaseParcel firebaseParcel = parcelList.get(position);
+                Log.e(TAG,"Parcelll "+ firebaseParcel.getName());
+
+
+                Intent intent = new Intent(CardActivity.this,ShowActivity.class).putExtra("firebaseParcel",
+                        new FirebaseParcel(
+                                firebaseParcel.getName(),
+                                firebaseParcel.getFileName(),
+                                firebaseParcel.getUrl()));
+                startActivity(intent);
+
             }
         }));
 
@@ -430,6 +443,7 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
     {
         Log.e(TAG,"UPDATES");
         models.clear();
+        parcelList.clear();
         for(DataSnapshot data : ds.getChildren())
         {
             FirebaseModel model = new FirebaseModel();
@@ -439,6 +453,9 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
             Log.e(TAG,model.getName() + " :: FileName :: " + model.getFileName() + " // // "+ model.getUrl());
             models.add(model);
             fileList.add(model.getUrl());
+            FirebaseParcel firebaseParcel = new FirebaseParcel();
+            firebaseParcel.setFbaseModel(model);
+            parcelList.add(firebaseParcel);
         }
         mAdapter.notifyDataSetChanged();
 
