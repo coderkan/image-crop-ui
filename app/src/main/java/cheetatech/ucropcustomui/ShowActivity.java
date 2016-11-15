@@ -8,7 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import cheetatech.ucropcustomui.firebase.FBaseModel;
+import cheetatech.ucropcustomui.firebase.FirebaseModel;
 import cheetatech.ucropcustomui.firebase.FirebaseParcel;
+import cheetatech.ucropcustomui.firebase.FirebaseParcelable;
 
 public class ShowActivity extends AppCompatActivity {
 
@@ -21,14 +24,8 @@ public class ShowActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //FirebaseParcel firebaseParcel = getIntent().getExtras().getParcelable("firebaseParcel");
-        //FirebaseParcel firebaseParcel = (FirebaseParcel) getIntent().getParcelableExtra("firebaseParcel");
-
-        Bundle data = getIntent().getExtras();
-        FirebaseParcel firebaseParcel = (FirebaseParcel)data.getParcelable("firebaseParcel");
-
-
-        Toast.makeText(getApplicationContext(),"Alınan sınıf " + firebaseParcel.getName(),Toast.LENGTH_SHORT).show();
+        FirebaseModel model = FBaseModel.getInstance().getModel();
+        Toast.makeText(getApplicationContext(),"Alınan Model "+ model.getName(),Toast.LENGTH_SHORT).show();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

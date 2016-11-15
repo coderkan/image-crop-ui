@@ -1,5 +1,7 @@
 package cheetatech.ucropcustomui;
 
+import android.*;
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.baoyz.pg.PG;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,13 +48,16 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.adapters.MyCardAdapter;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
+import cheetatech.ucropcustomui.firebase.FBaseModel;
 import cheetatech.ucropcustomui.firebase.FirebaseModel;
 import cheetatech.ucropcustomui.firebase.FirebaseParcel;
+import cheetatech.ucropcustomui.firebase.FirebaseParcelable;
 import cheetatech.ucropcustomui.utils.RecyclerItemClickListener;
 
-public class CardActivity extends AppCompatActivity  implements ChildEventListener{
+public class CardActivity extends BaseActivity implements ChildEventListener{
 
 
     @BindView(R.id.my_recycler_view)
@@ -61,7 +67,8 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
 
 
     ArrayList<String> fileList = new ArrayList<String>();
-    ArrayList<FirebaseParcel> parcelList = new ArrayList<FirebaseParcel>();
+    //ArrayList<FirebaseParcel> parcelList = new ArrayList<FirebaseParcel>();
+    ArrayList<FirebaseModel> parcelList = new ArrayList<FirebaseModel>();
 
 
     private int j = 0;
@@ -88,7 +95,10 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_load);
         ButterKnife.bind(this);
-        checkAndRequestPermissions();
+
+        checkPermission();
+        //checkAndRequestPermissions();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -125,17 +135,11 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
             public void onItemClick(View view, int position) {
                 Toast.makeText(getApplicationContext(),"indeximiz "+ position, Toast.LENGTH_SHORT).show();
 
-                FirebaseParcel firebaseParcel = parcelList.get(position);
-                Log.e(TAG,"Parcelll "+ firebaseParcel.getName());
-
-
-                Intent intent = new Intent(CardActivity.this,ShowActivity.class).putExtra("firebaseParcel",
-                        new FirebaseParcel(
-                                firebaseParcel.getName(),
-                                firebaseParcel.getFileName(),
-                                firebaseParcel.getUrl()));
+                FirebaseModel firebaseModel = parcelList.get(position);
+                Log.e(TAG,"Parcelll "+ firebaseModel.getName());
+                FBaseModel.getInstance().setModel(firebaseModel);
+                Intent intent = new Intent(CardActivity.this,ShowActivity.class);
                 startActivity(intent);
-
             }
         }));
 
@@ -191,6 +195,25 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
                         .setAction("Action", null).show();
             }
         });
+
+    }
+
+    public void checkPermission(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.INTERNET,
+                    getString(R.string.permission_write_storage_rationale),
+                    REQUEST_INTERNET_ACCESS_PERMISSION);
+        }else
+            Log.e(TAG,"Permission ALREADY granted access internet");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.ACCESS_NETWORK_STATE,
+                    getString(R.string.permission_write_storage_rationale),
+                    REQUEST_ACCESS_NETWORK_STATE_PERMISSION);
+        }else
+            Log.e(TAG,"Permission ALREADY granted access network");
+
     }
 
     public void loadImage(){
@@ -309,68 +332,89 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
 
 
 
-
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("TAG", "Permission callback called-------");
-        switch (requestCode) {
-            case 3: {
-
-                Map<String, Integer> perms = new HashMap<>();
-                // Initialize the map with both permissions
-                perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
-                //perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);*/
-                // Fill with actual results from user
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < permissions.length; i++)
-                        perms.put(permissions[i], grantResults[i]);
-                    // Check for both permissions
-                    if (perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
-                        //&& perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-                            ) {
-                        Log.d("TAG", "sms & location services permission granted");
-                        // process the normal flow
-                        //else any one or both the permissions are not granted
-                    } else {
-                        Log.d("TAG", "Some permissions are not granted ask again ");
-                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
-//                        // shouldShowRequestPermissionRationale will return true
-                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.INTERNET)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_NETWORK_STATE)
-                            // || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
-                                ) {
-                            showDialogOK("Internet and Phone State Permission required for this app",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            switch (which) {
-                                                case DialogInterface.BUTTON_POSITIVE:
-                                                    checkAndRequestPermissions();
-                                                    break;
-                                                case DialogInterface.BUTTON_NEGATIVE:
-                                                    // proceed with logic by disabling the related features or quit the app.
-                                                    break;
-                                            }
-                                        }
-                                    });
-                        }
-                        //permission is denied (and never ask again is  checked)
-                        //shouldShowRequestPermissionRationale will return false
-                        else {
-                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
-                                    .show();
-                            //                            //proceed with logic by disabling the related features or quit the app.
-                        }
-                    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case REQUEST_ACCESS_NETWORK_STATE_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.e(TAG,"Permission granted access network");
                 }
-            }
+                break;
+            case REQUEST_INTERNET_ACCESS_PERMISSION:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.e(TAG,"Permission granted access internet");
+                }
+            default:
+                super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+                break;
         }
-
     }
+
+
+
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        Log.d("TAG", "Permission callback called-------");
+//        switch (requestCode) {
+//            case 3: {
+//
+//                Map<String, Integer> perms = new HashMap<>();
+//                // Initialize the map with both permissions
+//                perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
+//                perms.put(android.Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
+//                //perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);*/
+//                // Fill with actual results from user
+//                if (grantResults.length > 0) {
+//                    for (int i = 0; i < permissions.length; i++)
+//                        perms.put(permissions[i], grantResults[i]);
+//                    // Check for both permissions
+//                    if (perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
+//                            && perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+//                        //&& perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+//                            ) {
+//                        Log.d("TAG", "sms & location services permission granted");
+//                        // process the normal flow
+//                        //else any one or both the permissions are not granted
+//                    } else {
+//                        Log.d("TAG", "Some permissions are not granted ask again ");
+//                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+////                        // shouldShowRequestPermissionRationale will return true
+//                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+//                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.INTERNET)
+//                                || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_NETWORK_STATE)
+//                            // || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
+//                                ) {
+//                            showDialogOK("Internet and Phone State Permission required for this app",
+//                                    new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialog, int which) {
+//                                            switch (which) {
+//                                                case DialogInterface.BUTTON_POSITIVE:
+//                                                    checkAndRequestPermissions();
+//                                                    break;
+//                                                case DialogInterface.BUTTON_NEGATIVE:
+//                                                    // proceed with logic by disabling the related features or quit the app.
+//                                                    break;
+//                                            }
+//                                        }
+//                                    });
+//                        }
+//                        //permission is denied (and never ask again is  checked)
+//                        //shouldShowRequestPermissionRationale will return false
+//                        else {
+//                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+//                                    .show();
+//                            //                            //proceed with logic by disabling the related features or quit the app.
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
 
 
 
@@ -386,8 +430,8 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
     private  boolean checkAndRequestPermissions() {
 
         if(Build.VERSION.SDK_INT >= 23) {
-            int permissionInternet = ContextCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET);
-            int permissionAccessNetworkState = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE);
+            int permissionInternet = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.INTERNET);
+            int permissionAccessNetworkState = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_NETWORK_STATE);
             List<String> listPermissionsNeeded = new ArrayList<>();
             if (permissionInternet != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(android.Manifest.permission.INTERNET);
@@ -453,9 +497,7 @@ public class CardActivity extends AppCompatActivity  implements ChildEventListen
             Log.e(TAG,model.getName() + " :: FileName :: " + model.getFileName() + " // // "+ model.getUrl());
             models.add(model);
             fileList.add(model.getUrl());
-            FirebaseParcel firebaseParcel = new FirebaseParcel();
-            firebaseParcel.setFbaseModel(model);
-            parcelList.add(firebaseParcel);
+            parcelList.add(model);
         }
         mAdapter.notifyDataSetChanged();
 

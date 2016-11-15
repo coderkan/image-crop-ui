@@ -16,6 +16,8 @@ public class BaseActivity extends AppCompatActivity {
     public static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
     public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
     public static final int REQUEST_CAMERA_ACCESS_PERMISSION = 103;
+    public static final int REQUEST_INTERNET_ACCESS_PERMISSION = 104;
+    public static final int REQUEST_ACCESS_NETWORK_STATE_PERMISSION = 105;
     public static final int REQUEST_START_CAMERA_APP = 0x02;
     public static final int REQUEST_SELECT_PICTURE = 0x01;
     public static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
