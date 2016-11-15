@@ -20,6 +20,7 @@ import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.ads.OnAdsListener;
 import cheetatech.ucropcustomui.dialogs.DialogBuilder;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
+import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
 import cheetatech.ucropcustomui.firebase.FBaseModel;
 import cheetatech.ucropcustomui.showactivity.ShowPresenter;
 import cheetatech.ucropcustomui.showactivity.ShowView;
@@ -130,6 +131,8 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
     @Override
     public void onOpenAds() {
         Toast.makeText(getApplicationContext(),"Ads starting",Toast.LENGTH_SHORT).show();
+        eCoinLib eCoinLib = new eCoinLib(getApplicationContext(),this);
+        eCoinLib.addCoin(50);
     }
 
     public class DialogBuild {

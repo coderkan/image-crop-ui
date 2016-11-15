@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -50,6 +51,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.adapters.MyCardAdapter;
+import cheetatech.ucropcustomui.decision.Desc;
+import cheetatech.ucropcustomui.decision.FileDesc;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.firebase.FBaseModel;
 import cheetatech.ucropcustomui.firebase.FirebaseModel;
@@ -97,31 +100,15 @@ public class CardActivity extends BaseActivity implements ChildEventListener{
         ButterKnife.bind(this);
 
         checkPermission();
-        //checkAndRequestPermissions();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         controlAuth();
-
         controlStorage();
-
-
-
-
-
-
-//        ArrayList<File> fileList = (ArrayList<File>) FileUtilz.getListFiles(getApplicationContext(), Side.BACKGROUND);
-//
-//        for (File file: fileList
-//             ) {
-//            Log.e("TAG","Name "+ file.getAbsolutePath().toString());
-//        }
-
 
         mRecyclerView.setHasFixedSize(true);
 
-        //mLayoutManager = new LinearLayoutManager(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(CardActivity.this,4);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
@@ -143,56 +130,10 @@ public class CardActivity extends BaseActivity implements ChildEventListener{
             }
         }));
 
-
-//        storage = FirebaseStorage.getInstance();
-//        if(storage == null)
-//            Log.e(TAG,"storage null");
-//        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
-//        if(storageRef == null)
-//            Log.e(TAG,"storage REF null");
-//
-//        StorageReference reference = storageRef.child("images");
-//
-//        if(reference == null)
-//            Log.e(TAG,"REF null");
-
-
-
-
-
-
-//        ArrayList<String> list = new ArrayList<String>();
-//        for(int i = 0; i < 20; i++)
-//            list.add("Erkan " + i);
-//
-//        ArrayList<File> fileList = (ArrayList<File>) FileUtilz.getListFiles(getApplicationContext(), Side.BACKGROUND);
-//
-//        for (File file: fileList
-//             ) {
-//            Log.e("TAG","Name "+ file.getAbsolutePath().toString());
-//        }
-//
-//        mRecyclerView.setHasFixedSize(true);
-//
-//        mLayoutManager = new LinearLayoutManager(this);
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-//
-//        mAdapter = new MyAdapter(fileList);
-//        mRecyclerView.setAdapter(mAdapter);
-
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                loadImage();
-                //addFireBase();
-                //signIn();
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
 
@@ -216,42 +157,6 @@ public class CardActivity extends BaseActivity implements ChildEventListener{
 
     }
 
-    public void loadImage(){
-        if(models.size() > 0){
-            StorageReference imagesRef = storageRef.child("images");
-            Log.e(TAG,"imagesRef Path: "+ imagesRef.getPath() + " name : "+ imagesRef.getName());
-
-            String filename = models.get(0).getFileName();
-            StorageReference spaceRef = imagesRef.child(filename);
-            Log.e(TAG,"spacesRef Path: "+ spaceRef.getPath() + " name : "+ spaceRef.getName());
-
-            StorageReference imRef = imagesRef.child(filename);
-
-            File localFile = null;
-
-            localFile = FileUtilz.getOutMediaFile(this,"erkanimagedownload.jpg");
-
-            final File finalLocalFile = localFile;
-            imRef.getFile(finalLocalFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Log.e(TAG,"OnSuccess Download File "+ finalLocalFile.getAbsolutePath().toString() );
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG,"Error onFailure Download Image");
-                }
-            });
-
-
-            String url = models.get(0).getUrl();
-            Picasso.with(this).load(url).into(loadImageView);
-        }else{
-            Picasso.with(this).load(R.drawable.bg4).into(loadImageView);
-        }
-
-    }
 
     private void controlStorage() {
 
@@ -266,19 +171,6 @@ public class CardActivity extends BaseActivity implements ChildEventListener{
 
         if(reference == null)
             Log.e(TAG,"REF null");
-
-
-        //        storage = FirebaseStorage.getInstance();
-//        if(storage == null)
-//            Log.e(TAG,"storage null");
-//        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
-//        if(storageRef == null)
-//            Log.e(TAG,"storage REF null");
-//
-//        StorageReference reference = storageRef.child("images");
-//
-//        if(reference == null)
-//            Log.e(TAG,"REF null");
     }
 
     private void signIn(){
@@ -351,72 +243,6 @@ public class CardActivity extends BaseActivity implements ChildEventListener{
                 break;
         }
     }
-
-
-
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-//        Log.d("TAG", "Permission callback called-------");
-//        switch (requestCode) {
-//            case 3: {
-//
-//                Map<String, Integer> perms = new HashMap<>();
-//                // Initialize the map with both permissions
-//                perms.put(android.Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
-//                perms.put(android.Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
-//                //perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);*/
-//                // Fill with actual results from user
-//                if (grantResults.length > 0) {
-//                    for (int i = 0; i < permissions.length; i++)
-//                        perms.put(permissions[i], grantResults[i]);
-//                    // Check for both permissions
-//                    if (perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
-//                            && perms.get(android.Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
-//                        //&& perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
-//                            ) {
-//                        Log.d("TAG", "sms & location services permission granted");
-//                        // process the normal flow
-//                        //else any one or both the permissions are not granted
-//                    } else {
-//                        Log.d("TAG", "Some permissions are not granted ask again ");
-//                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
-////                        // shouldShowRequestPermissionRationale will return true
-//                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
-//                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.INTERNET)
-//                                || ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_NETWORK_STATE)
-//                            // || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
-//                                ) {
-//                            showDialogOK("Internet and Phone State Permission required for this app",
-//                                    new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            switch (which) {
-//                                                case DialogInterface.BUTTON_POSITIVE:
-//                                                    checkAndRequestPermissions();
-//                                                    break;
-//                                                case DialogInterface.BUTTON_NEGATIVE:
-//                                                    // proceed with logic by disabling the related features or quit the app.
-//                                                    break;
-//                                            }
-//                                        }
-//                                    });
-//                        }
-//                        //permission is denied (and never ask again is  checked)
-//                        //shouldShowRequestPermissionRationale will return false
-//                        else {
-//                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
-//                                    .show();
-//                            //                            //proceed with logic by disabling the related features or quit the app.
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
-
-
 
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(this)
@@ -494,10 +320,27 @@ public class CardActivity extends BaseActivity implements ChildEventListener{
             model.setName(data.getValue(FirebaseModel.class).getName());
             model.setUrl(data.getValue(FirebaseModel.class).getUrl());
             model.setFileName(data.getValue(FirebaseModel.class).getFileName());
+            model.setState((data.getValue(FirebaseModel.class).getState()));
+
             Log.e(TAG,model.getName() + " :: FileName :: " + model.getFileName() + " // // "+ model.getUrl());
-            models.add(model);
-            fileList.add(model.getUrl());
-            parcelList.add(model);
+
+            if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND)
+            {
+                if(model.getState() == 0){
+                    models.add(model);
+                    fileList.add(model.getUrl());
+                    parcelList.add(model);
+                }
+            }
+
+            if(FileDesc.getInstance().getDesc() == Desc.CUBESIDE)
+            {
+                if(model.getState() == 1){
+                    models.add(model);
+                    fileList.add(model.getUrl());
+                    parcelList.add(model);
+                }
+            }
         }
         mAdapter.notifyDataSetChanged();
 

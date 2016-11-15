@@ -8,6 +8,7 @@ public class FirebaseModel {
     private String name;
     private String fileName;
     private String url;
+    private int state;
 
     public FirebaseModel(){
 
@@ -21,7 +22,14 @@ public class FirebaseModel {
         this.url = url;
         this.fileName = fileName;
     }
-
+    public FirebaseModel(String name, String fileName,String url,int state) {
+        this.name = name;
+        this.url = url;
+        this.fileName = fileName;
+        this.state = state;
+    }
+    public int getState(){return this.state;}
+    public void setState(int state){this.state = state;}
     public String getFileName(){
         return fileName;
     }

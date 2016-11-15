@@ -92,41 +92,6 @@ public class ImageLoadActivity extends AppCompatActivity  implements ChildEventL
 
         controlStorage();
 
-//        storage = FirebaseStorage.getInstance();
-//        if(storage == null)
-//            Log.e(TAG,"storage null");
-//        storageRef = storage.getReferenceFromUrl(BUCKETPATH);
-//        if(storageRef == null)
-//            Log.e(TAG,"storage REF null");
-//
-//        StorageReference reference = storageRef.child("images");
-//
-//        if(reference == null)
-//            Log.e(TAG,"REF null");
-
-
-
-
-
-
-//        ArrayList<String> list = new ArrayList<String>();
-//        for(int i = 0; i < 20; i++)
-//            list.add("Erkan " + i);
-//
-//        ArrayList<File> fileList = (ArrayList<File>) FileUtilz.getListFiles(getApplicationContext(), Side.BACKGROUND);
-//
-//        for (File file: fileList
-//             ) {
-//            Log.e("TAG","Name "+ file.getAbsolutePath().toString());
-//        }
-//
-//        mRecyclerView.setHasFixedSize(true);
-//
-//        mLayoutManager = new LinearLayoutManager(this);
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-//
-//        mAdapter = new MyAdapter(fileList);
-//        mRecyclerView.setAdapter(mAdapter);
 
 
 

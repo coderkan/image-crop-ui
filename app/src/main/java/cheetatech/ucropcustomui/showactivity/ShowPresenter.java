@@ -16,6 +16,8 @@ import java.io.File;
 import cheetatech.ucropcustomui.CardActivity;
 import cheetatech.ucropcustomui.R;
 import cheetatech.ucropcustomui.controllers.Side;
+import cheetatech.ucropcustomui.decision.Desc;
+import cheetatech.ucropcustomui.decision.FileDesc;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
 import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
 import cheetatech.ucropcustomui.fileutil.FileUtilz;
@@ -106,9 +108,17 @@ public class ShowPresenter {
     public void downloadImage() {
         String fname = this.model.getFileName();
 
-        if(FileUtilz.isFileInRootBackground(context,fname)){
-            this.view.onAlreadyDownload(fname);
-            return;
+        if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND){
+            if(FileUtilz.isFileInRoot(this.context,Side.BACKGROUND,fname)){
+                this.view.onAlreadyDownload(fname);
+                return;
+            }
+        }
+        else{
+            if(FileUtilz.isFileInRoot(this.context,Side.CUBESIDES,fname)){
+                this.view.onAlreadyDownload(fname);
+                return;
+            }
         }
 
         // Coin Controlü
@@ -129,7 +139,11 @@ public class ShowPresenter {
 
         File localFile = null;
 
-        String path = Side.BACKGROUND + File.separator + this.model.getFileName();
+        String path = "";
+        if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND)
+            path = Side.BACKGROUND + File.separator + this.model.getFileName();
+        else
+            path = Side.CUBESIDES + File.separator + this.model.getFileName();
 
         localFile = FileUtilz.getOutMediaFile(this.context,path);
         final File finalLocalFile = localFile;
@@ -153,9 +167,19 @@ public class ShowPresenter {
     public void deleteImage() {
         String fname = this.model.getFileName();
 
-        if(FileUtilz.isFileInRootBackground(context,fname)){
-            String path = Side.BACKGROUND + File.separator + this.model.getFileName();
-
+        String path = "";
+        if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND)
+        {
+            if(FileUtilz.isFileInRoot(this.context,Side.BACKGROUND,fname)){
+                path = Side.BACKGROUND + File.separator + this.model.getFileName();
+            }
+        }
+        if(FileDesc.getInstance().getDesc() == Desc.CUBESIDE){
+            if(FileUtilz.isFileInRoot(this.context,Side.CUBESIDES,fname)){
+                path = Side.CUBESIDES + File.separator + this.model.getFileName();
+            }
+        }
+        if(path != ""){
             File localFile = FileUtilz.getOutMediaFile(this.context,path);
             if(localFile.exists()){
                 boolean deleted = localFile.delete();
@@ -172,8 +196,30 @@ public class ShowPresenter {
                 this.view.onChangeFabButtonDownload();
                 this.view.onRemovedSuccessfuly();
             }
-
         }
+
+
+//        if(FileUtilz.isFileInRootBackground(context,fname)){
+//            String path = Side.BACKGROUND + File.separator + this.model.getFileName();
+//
+//            File localFile = FileUtilz.getOutMediaFile(this.context,path);
+//            if(localFile.exists()){
+//                boolean deleted = localFile.delete();
+//                if(deleted){
+//                    this.view.onChangeFabButtonDownload();
+//                    this.view.onRemovedSuccessfuly();
+//                }
+//                else{
+//                    this.view.onChangeFabButtonDisable();
+//                    this.view.onFailureRemovedImage();
+//                }
+//
+//            }else{
+//                this.view.onChangeFabButtonDownload();
+//                this.view.onRemovedSuccessfuly();
+//            }
+//
+//        }
 
     }
 

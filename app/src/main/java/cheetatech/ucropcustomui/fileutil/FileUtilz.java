@@ -102,6 +102,14 @@ public class FileUtilz {
         return nfile.exists();
     }
 
+    public static boolean isFileInRoot(Context context, String directory,String fileName){
+        File root = getRootFile(context);
+        directoryControl(context,directory);
+        String path = root.getPath() + File.separator + directory + File.separator + fileName;
+        File nfile = new File(path);
+        return nfile.exists();
+    }
+
     public static File getOutputMediaFileAndCreate(Context context,String mImageName){
 
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory()

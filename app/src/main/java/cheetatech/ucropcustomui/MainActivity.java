@@ -22,6 +22,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.decision.Desc;
+import cheetatech.ucropcustomui.decision.FileDesc;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
 import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
 import cheetatech.ucropcustomui.mainactivities.MainPresenter;
@@ -150,6 +152,7 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
 
     @OnClick(R.id.backgroundIconChange) void clickBackgroundImageChange(){
 
+        FileDesc.getInstance().setDesc(Desc.BACKGROUND);
         Toast.makeText(getApplicationContext(),"click Apply Icon",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, ImageLoadActivity.class);
         startActivity(intent);
@@ -164,6 +167,7 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
     @OnClick(R.id.cubeBackgroundChange) void clickCubeBackgroundImageChange(){
 
 
+        FileDesc.getInstance().setDesc(Desc.CUBESIDE);
         Toast.makeText(getApplicationContext(),"click Background Icon",Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, CardActivity.class));
 
