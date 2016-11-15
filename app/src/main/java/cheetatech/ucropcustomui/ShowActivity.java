@@ -1,8 +1,12 @@
 package cheetatech.ucropcustomui;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,12 +17,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
+import cheetatech.ucropcustomui.ads.OnAdsListener;
+import cheetatech.ucropcustomui.dialogs.DialogBuilder;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
 import cheetatech.ucropcustomui.firebase.FBaseModel;
 import cheetatech.ucropcustomui.showactivity.ShowPresenter;
 import cheetatech.ucropcustomui.showactivity.ShowView;
 
-public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibListener{
+public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibListener,OnAdsListener{
 
 
     @BindView(R.id.fab)
@@ -106,6 +112,7 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
     @Override
     public void onNeedMoreCoin() {
         Toast.makeText(getApplicationContext(),"You can not download image to your local, Need More Coin",Toast.LENGTH_SHORT).show();
+        new DialogBuild(this);
     }
 
     @Override
@@ -119,4 +126,40 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
     public void onLoadCoin(int coin) {
         textCoin.setText(""+coin+ " $ ");
     }
+
+    @Override
+    public void onOpenAds() {
+        Toast.makeText(getApplicationContext(),"Ads starting",Toast.LENGTH_SHORT).show();
+    }
+
+    public class DialogBuild {
+
+        private OnAdsListener listener = null;
+        private Dialog dialog = null;
+
+        public DialogBuild(){}
+        public DialogBuild(final OnAdsListener listener){
+
+            this.listener = listener;
+            this.dialog = new Dialog(ShowActivity.this);
+
+            dialog.setContentView(R.layout.custom_dialog);
+            dialog.setTitle("Get More Coin");
+            dialog.setCanceledOnTouchOutside(false);
+
+            Button apply = (Button)dialog.findViewById(R.id.button_ad_apply);
+
+            apply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onOpenAds();
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+        }
+
+    }
+
 }

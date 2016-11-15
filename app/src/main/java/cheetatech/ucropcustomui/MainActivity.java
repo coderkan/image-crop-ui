@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
             presenter = new MainPresenter(getApplicationContext(),this);
 
         eCoinLib eCoin = new eCoinLib(getApplicationContext(),this);
-        //eCoin.removeCoin(350);
+        //eCoin.removeCoin(700);
         //eCoin.addCoin(380);
 
 
