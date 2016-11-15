@@ -44,6 +44,8 @@ public class FileUtilz {
     }
 
 
+
+
     public static String accomplish(String s1, String s2){
         return s1 + File.separator + s2;
     }
@@ -81,6 +83,23 @@ public class FileUtilz {
         File root = getRootFile(context);
         File nfile = new File(root.getPath()+ File.separator+ directoryName);
         return nfile;
+    }
+
+
+    public static File getFileInRootBackground(Context context, String fileName){
+        File root = getRootFile(context);
+        directoryControl(context,Side.BACKGROUND);
+        String path = root.getPath() + File.separator + Side.BACKGROUND + File.separator + fileName;
+        File nfile = new File(path);
+        return nfile;
+    }
+
+    public static boolean isFileInRootBackground(Context context, String fileName){
+        File root = getRootFile(context);
+        directoryControl(context,Side.BACKGROUND);
+        String path = root.getPath() + File.separator + Side.BACKGROUND + File.separator + fileName;
+        File nfile = new File(path);
+        return nfile.exists();
     }
 
     public static File getOutputMediaFileAndCreate(Context context,String mImageName){

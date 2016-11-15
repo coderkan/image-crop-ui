@@ -13,4 +13,19 @@
     tools:context="cheetatech.ucropcustomui.ShowActivity"
     tools:showIn="@layout/activity_show">
 
+    <TextView
+        android:id="@+id/text_coin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="50sp"
+        android:layout_centerHorizontal="true"
+        />
+    <ImageView
+        android:id="@+id/show_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/text_coin"
+        />
+
 </RelativeLayout>

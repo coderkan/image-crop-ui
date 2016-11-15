@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,10 +22,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
+import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
 import cheetatech.ucropcustomui.mainactivities.MainPresenter;
 import cheetatech.ucropcustomui.mainactivities.MainView;
 
-public class MainActivity extends BaseActivity implements MainView{
+public class MainActivity extends BaseActivity implements MainView,OnCoinLibListener{
 
     @BindView(R.id.backgroundIconChange) ImageView backgroundIconChange;
     @BindView(R.id.cubeBackgroundChange) ImageView cubeBackgroundChange;
@@ -53,6 +56,13 @@ public class MainActivity extends BaseActivity implements MainView{
         setSupportActionBar(toolbar);
         if(presenter == null)
             presenter = new MainPresenter(getApplicationContext(),this);
+
+        eCoinLib eCoin = new eCoinLib(getApplicationContext(),this);
+        //eCoin.removeCoin(350);
+        eCoin.addCoin(380);
+
+
+
         loadElements();
 
     }
@@ -181,5 +191,19 @@ public class MainActivity extends BaseActivity implements MainView{
     @Override
     public void onLoadCubeSide(Bitmap bitmap) {
 
+    }
+
+    @Override
+    public void onNeedMoreCoin() {
+        Log.e("onLoad","Sorry You cannot downlond File :)) You Don^t Have Enough Coin ");
+    }
+
+    @Override
+    public void onEnoughCoin() {
+        Log.e("onLoad","Download File :)) You Enough Coin ");
+    }
+    @Override
+    public void onLoadCoin(int coin) {
+        Log.e("onLoad","Loaded Coin "+ coin);
     }
 }
