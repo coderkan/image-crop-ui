@@ -14,5 +14,7 @@ public interface ShowView {
     void onAlreadyDownload(String name);
     void onDownloadSuccessfully(String name);
     void onFailureDownloadImage();
+    void onRemovedSuccessfuly();
+    void onFailureRemovedImage();
 
 }

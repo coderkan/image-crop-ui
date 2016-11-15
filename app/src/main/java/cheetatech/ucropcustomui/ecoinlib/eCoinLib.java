@@ -192,7 +192,7 @@ public class eCoinLib {
     }
 
 
-    public void compareAndRemoveCoin(){
+    public boolean compareAndRemoveCoin(){
         SharedPreferences sharedPreferences = this.context.getSharedPreferences(context.getString(R.string.preference_file_key),Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -202,21 +202,26 @@ public class eCoinLib {
             editor.commit();
             this.listener.onLoadCoin(zeroCoin);
             this.listener.onNeedMoreCoin();
+            return false;
         }
         else{
             if(val >= fullCoin){
                 val -= fullCoin;
-                if(val < 0 )
+                if(val < 0 ){
                     this.listener.onNeedMoreCoin();
+                    return false;
+                }
                 else{
                     editor.putInt(this.coinKey, val);
                     editor.commit();
                     this.listener.onLoadCoin(val);
                     this.listener.onEnoughCoin();
+                    return true;
                 }
             }else{
                 this.listener.onNeedMoreCoin();
                 this.listener.onLoadCoin(val);
+                return false;
             }
         }
     }

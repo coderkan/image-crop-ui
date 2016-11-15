@@ -35,6 +35,8 @@ public class ShowPresenter {
     private FirebaseStorage storage = null;
     private StorageReference storageRef = null;
 
+    private boolean state = false;
+
 
     public ShowPresenter(){
 
@@ -57,11 +59,14 @@ public class ShowPresenter {
         // fab button icon control
         String fname = this.model.getFileName();
 
-        if(FileUtilz.isFileInRootBackground(context,fname))
+        if(FileUtilz.isFileInRootBackground(context,fname)){
             this.view.onChangeFabButtonDisable();
-        else
+            setState(true);
+        }
+        else{
             this.view.onChangeFabButtonDownload();
-
+            setState(false);
+        }
         // imgenin yüklenmesi yapılacak
         if(this.model.getUrl() != null)
             this.view.onPreviewImage(this.model.getUrl());
@@ -78,6 +83,13 @@ public class ShowPresenter {
         if(this.context == null)
             return;
         eCoin = new eCoinLib(context,this.coinListener);
+    }
+
+    public boolean getState(){
+        return this.state;
+    }
+    public void setState(boolean state){
+        this.state = state;
     }
 
 
@@ -101,8 +113,11 @@ public class ShowPresenter {
 
         // Coin Controlü
 
+        if(!this.eCoin.compareAndRemoveCoin())
+            return;
 
 
+        controlStorage();
         //
         StorageReference imagesRef = storageRef.child("images");
 
@@ -131,12 +146,38 @@ public class ShowPresenter {
                 view.onFailureDownloadImage();
             }
         });
+    }
 
 
 
+    public void deleteImage() {
+        String fname = this.model.getFileName();
 
+        if(FileUtilz.isFileInRootBackground(context,fname)){
+            String path = Side.BACKGROUND + File.separator + this.model.getFileName();
 
+            File localFile = FileUtilz.getOutMediaFile(this.context,path);
+            if(localFile.exists()){
+                boolean deleted = localFile.delete();
+                if(deleted){
+                    this.view.onChangeFabButtonDownload();
+                    this.view.onRemovedSuccessfuly();
+                }
+                else{
+                    this.view.onChangeFabButtonDisable();
+                    this.view.onFailureRemovedImage();
+                }
 
+            }else{
+                this.view.onChangeFabButtonDownload();
+                this.view.onRemovedSuccessfuly();
+            }
+
+        }
 
     }
+
+
+
+
 }

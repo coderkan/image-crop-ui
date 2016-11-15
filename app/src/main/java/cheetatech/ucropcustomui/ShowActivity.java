@@ -1,30 +1,20 @@
 package cheetatech.ucropcustomui;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
-import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
 import cheetatech.ucropcustomui.firebase.FBaseModel;
-import cheetatech.ucropcustomui.firebase.FirebaseModel;
-import cheetatech.ucropcustomui.firebase.FirebaseParcel;
-import cheetatech.ucropcustomui.firebase.FirebaseParcelable;
 import cheetatech.ucropcustomui.showactivity.ShowPresenter;
 import cheetatech.ucropcustomui.showactivity.ShowView;
 
@@ -57,21 +47,25 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
     }
 
     @OnClick(R.id.fab) public void fabOnClick(){
-        presenter.downloadImage();
+        if(presenter.getState())
+            presenter.deleteImage();
+        else
+            presenter.downloadImage();
     }
 
     @Override
     public void onChangeFabButtonDisable() {
         fab.setImageResource(R.drawable.ic_file_remove);
+        presenter.setState(true);
     }
 
     @Override
     public void onChangeFabButtonDownload() {
         fab.setImageResource(R.drawable.ic_file_download);
+        presenter.setState(false);
     }
 
     @Override
@@ -82,16 +76,31 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
     @Override
     public void onAlreadyDownload(String name) {
         Toast.makeText(getApplicationContext(),"File is already downloaded local",Toast.LENGTH_SHORT).show();
+        onChangeFabButtonDisable();
     }
 
     @Override
     public void onDownloadSuccessfully(String name) {
         Toast.makeText(getApplicationContext(),"Successfuly downloaded image to "+ name,Toast.LENGTH_SHORT).show();
+        onChangeFabButtonDisable();
     }
 
     @Override
     public void onFailureDownloadImage() {
         Toast.makeText(getApplicationContext(),"An error when downloaded images, please checout your NETWORK... ",Toast.LENGTH_SHORT).show();
+        onChangeFabButtonDownload();
+    }
+
+    @Override
+    public void onRemovedSuccessfuly() {
+        Toast.makeText(getApplicationContext(),"Successfully Removed image",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFailureRemovedImage() {
+        Toast.makeText(getApplicationContext(),"Remove Failure image",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
