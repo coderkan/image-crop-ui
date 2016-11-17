@@ -157,6 +157,21 @@ public class ImageController {
     }
 
 
+    public File getBackgroundFileInRootDirectory(String directory)
+    {
+        FileUtilz.directoryControl(this.context,directory);
+
+        String npath = FileUtilz.accomplish(directory,Side.REF_BACKGROUND/*ChangeBackground.cubeBackgroundPath*/);
+
+        File pictureFile = FileUtilz.getOutMediaFile(context, npath);
+        if(!pictureFile.exists()){
+            save(pictureFile,BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1));
+        }
+        pictureFile = FileUtilz.getOutMediaFile(context, npath);
+        return pictureFile;
+    }
+
+
     public Bitmap getBackgroundBitmapInDirectory(String directory)
     {
         FileUtilz.directoryControl(this.context,directory);

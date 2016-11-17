@@ -59,6 +59,9 @@ public class BackgroundPresenter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            File file = imageController.getBackgroundFileInRootDirectory(Side.CUBE1);
+            this.currentFile = file;
+
             this.view.onLoadGalleryViews(imageModels);
             this.view.onSetClickListeners(imageModels);
         }
@@ -90,9 +93,18 @@ public class BackgroundPresenter {
 
 
     public void loadBackground() {
-        Bitmap bitmap = imageController.getBackgroundBitmapInDirectory(Side.CUBE1);//imageController.getBackgroundBitmap();
-        this.currentBitmap = bitmap;
-        this.view.onLoadBackgroundImage(bitmap);
+        //File file = imageController.getBackgroundFileInRootDirectory(Side.CUBE1);
+        //this.currentFile = file;
+        if(this.currentFile != null)
+            this.view.onLoadBackgroundImage(this.currentFile);
+        else{
+            File file = imageController.getBackgroundFileInRootDirectory(Side.CUBE1);
+            this.currentFile = file;
+            this.view.onLoadBackgroundImage(this.currentFile);
+        }
+//        Bitmap bitmap = imageController.getBackgroundBitmapInDirectory(Side.CUBE1);//imageController.getBackgroundBitmap();
+//        this.currentBitmap = bitmap;
+//        this.view.onLoadBackgroundImage(bitmap);
     }
 
     public void setSelectedImageModel(ImageModel selectedImageModel) {
