@@ -57,17 +57,26 @@ public class ShowPresenter {
 
     public void init( FirebaseModel model) {
         this.model = model;
-
         // fab button icon control
         String fname = this.model.getFileName();
 
-        if(FileUtilz.isFileInRootBackground(context,fname)){
-            this.view.onChangeFabButtonDisable();
-            setState(true);
+        if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND){
+            if(FileUtilz.isFileInRoot(this.context,Side.BACKGROUND,fname)){
+                this.view.onChangeFabButtonDisable();
+                setState(true);
+            }else{
+                this.view.onChangeFabButtonDownload();
+                setState(false);
+            }
         }
         else{
-            this.view.onChangeFabButtonDownload();
-            setState(false);
+            if(FileUtilz.isFileInRoot(this.context,Side.CUBESIDES,fname)){
+                this.view.onChangeFabButtonDisable();
+                setState(true);
+            }else{
+                this.view.onChangeFabButtonDownload();
+                setState(false);
+            }
         }
         // imgenin yüklenmesi yapılacak
         if(this.model.getUrl() != null)

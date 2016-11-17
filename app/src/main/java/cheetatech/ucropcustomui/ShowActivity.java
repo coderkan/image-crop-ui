@@ -47,8 +47,8 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
 
         // Presenter's method
         presenter = new ShowPresenter(getApplicationContext(),this);
-        presenter.init(FBaseModel.getInstance().getModel());
         presenter.setCoinListener(this);
+        presenter.init(FBaseModel.getInstance().getModel());
         presenter.loadCoin();
         //
 
