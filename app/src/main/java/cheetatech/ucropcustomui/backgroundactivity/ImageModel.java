@@ -3,6 +3,8 @@ package cheetatech.ucropcustomui.backgroundactivity;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import java.io.File;
+
 /**
  * Created by erkan on 08.11.2016.
  */
@@ -16,6 +18,7 @@ public class ImageModel {
     private int index;
     private Bitmap bitmap;
     private View view = null;
+    private File file = null;
 
     public ImageModel(){
 
@@ -25,6 +28,14 @@ public class ImageModel {
         this.id = id;
         this.index = index;
     }
+    public ImageModel(File file ,int id,int index){
+        this.file = file;
+        this.id = id;
+        this.index = index;
+    }
+
+    public File getFile(){return this.file;}
+    public void setFile(File file){this.file = file;}
 
     public View getView(){
         return view;

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import cheetatech.ucropcustomui.controllers.ImageController;
 import cheetatech.ucropcustomui.controllers.Side;
@@ -23,6 +24,7 @@ public class BackgroundPresenter {
     private Context context = null;
     private ImageController imageController = null;
     private Bitmap currentBitmap = null;
+    private File currentFile = null;
 
     public BackgroundPresenter(){}
 
@@ -36,29 +38,55 @@ public class BackgroundPresenter {
             imageController = new ImageController(this.context);
     }
 
+
     public void init(){
-        Bitmap[] bitmaps = imageController.getAllGalleryFile(Side.BACKGROUND);
-        if(bitmaps == null)
-            Log.e("TAG","Bitmaps are NULL");
-        this.imageModels.clear();
-        int i = 0;
-        for (Bitmap bitmap:
-                bitmaps
-             ) {
-            imageModels.add(imageController.getImageModel(bitmap));
-            Log.e("TAG","Bitmaps " + imageModels.get(i++).getIndex());
+
+        List<File> files = imageController.getAllGalleryFileList(Side.BACKGROUND);
+
+        if(files.size() > 0){
+            this.imageModels.clear();
+            int i = 0;
+            for (File file:files
+                 ) {
+                imageModels.add(imageController.getImageModel(file));
+                Log.e("TAG","Bitmaps " + imageModels.get(i++).getIndex());
+            }
+            try {
+                FileUtilz.copyFileToDestination(this.context,
+                        FileUtilz.accomplish(Side.CUBE1,Side.BACKGROUNDPATH),
+                        FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND)
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            this.view.onLoadGalleryViews(imageModels);
+            this.view.onSetClickListeners(imageModels);
         }
-        try {
-            FileUtilz.copyFileToDestination(this.context,
-                    FileUtilz.accomplish(Side.CUBE1,Side.BACKGROUNDPATH),
-                    FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND)
-                    );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.view.onLoadGalleryViews(imageModels);
-        this.view.onSetClickListeners(imageModels);
+
     }
+//    public void init(){
+//        Bitmap[] bitmaps = imageController.getAllGalleryFile(Side.BACKGROUND);
+//        if(bitmaps == null)
+//            Log.e("TAG","Bitmaps are NULL");
+//        this.imageModels.clear();
+//        int i = 0;
+//        for (Bitmap bitmap:
+//                bitmaps
+//             ) {
+//            imageModels.add(imageController.getImageModel(bitmap));
+//            Log.e("TAG","Bitmaps " + imageModels.get(i++).getIndex());
+//        }
+//        try {
+//            FileUtilz.copyFileToDestination(this.context,
+//                    FileUtilz.accomplish(Side.CUBE1,Side.BACKGROUNDPATH),
+//                    FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND)
+//                    );
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        this.view.onLoadGalleryViews(imageModels);
+//        this.view.onSetClickListeners(imageModels);
+//    }
 
 
     public void loadBackground() {
@@ -68,13 +96,21 @@ public class BackgroundPresenter {
     }
 
     public void setSelectedImageModel(ImageModel selectedImageModel) {
-        this.currentBitmap = selectedImageModel.getBitmap();
-        this.view.onLoadBackgroundImage(this.currentBitmap);
+        //this.currentBitmap = selectedImageModel.getBitmap();
+        this.currentFile = selectedImageModel.getFile();
+        this.view.onLoadBackgroundImage(this.currentFile);
     }
     public Bitmap getCurrentBitmap(){
         return this.currentBitmap;
     }
     public void setCurrentBitmap(Bitmap bitmap){
         this.currentBitmap = bitmap;
+    }
+
+    public File getCurrentFile(){
+        return this.currentFile;
+    }
+    public void setCurrentFile(File file){
+        this.currentFile = file;
     }
 }

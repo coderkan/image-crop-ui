@@ -14,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.yalantis.ucrop.task.BitmapCropTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import cheetatech.ucropcustomui.ChangeBackground;
@@ -278,6 +280,18 @@ public class ImageController {
         return bitmaps;
     }
 
+
+    public List<File> getAllGalleryFileList(String rootPath)
+    {
+        FileUtilz.directoryControl(this.context,rootPath);
+        File file = FileUtilz.getDirectoryInRoot(this.context,rootPath); // get backgroundimages directory
+        List<File> parentFiles = null;
+        if(file.exists())
+            parentFiles = FileUtilz.getListFiles(file);
+        return parentFiles;
+    }
+
+
     public Bitmap[] getAllGalleryFile(String rootPath)
     {
 
@@ -386,6 +400,32 @@ public class ImageController {
     }
 
 
+    public ImageModel getImageModel(File file)
+    {
+        ImageModel imageModel = new ImageModel();
+        LinearLayout linearLayout = new LinearLayout(this.context);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(250,250));
+        linearLayout.setGravity(Gravity.CENTER);
+
+        ImageView imageView = new ImageView(this.context);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(220,220));
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        //imageView.setImageBitmap(bitmap);
+        Picasso.with(this.context).load(file).into(imageView);
+
+        int uniqueId = ViewIdGenerator.generateViewId();
+        imageView.setId(uniqueId);
+        linearLayout.addView(imageView);
+
+        imageModel.setIndex(ImageModel.counter++);
+        imageModel.setId(uniqueId);
+        //imageModel.setBitmap(bitmap);
+        imageModel.setFile(file);
+        imageModel.setView(linearLayout);
+
+        Log.e("TAG","Id ler : " + uniqueId + " index : "+ ImageModel.counter);
+        return imageModel;
+    }
 
     public ImageModel getImageModel(Bitmap bitmap)
     {

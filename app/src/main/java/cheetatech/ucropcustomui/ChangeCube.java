@@ -471,6 +471,11 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     }
 
     @Override
+    public void onLoadBackgroundImage(File file) {
+
+    }
+
+    @Override
     public void onLoadCubeSideBitmap(int side, Bitmap bitmap) {
         this.cubeSides[side].setImageBitmap(bitmap);
     }

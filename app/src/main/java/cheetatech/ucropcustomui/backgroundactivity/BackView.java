@@ -3,6 +3,7 @@ package cheetatech.ucropcustomui.backgroundactivity;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -16,4 +17,5 @@ public interface BackView {
     void onLoadGalleryViews(ArrayList<ImageModel> models);
     void onSetClickListeners(ArrayList<ImageModel> models);
     void onLoadBackgroundImage(Bitmap bitmap);
+    void onLoadBackgroundImage(File file);
 }

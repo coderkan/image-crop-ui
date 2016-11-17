@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -429,5 +430,10 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     @Override
     public void onLoadBackgroundImage(Bitmap bitmap) {
         backgroundImageView.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onLoadBackgroundImage(File file) {
+        Picasso.with(getApplicationContext()).load(file).into(backgroundImageView);
     }
 }
