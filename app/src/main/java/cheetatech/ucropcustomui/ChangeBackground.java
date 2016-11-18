@@ -460,6 +460,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onLoadBackgroundImage(File file) {
-        Picasso.with(getApplicationContext()).load(file).into(backgroundImageView);
+        Picasso.with(getApplicationContext()).load(file).fit().into(backgroundImageView);
     }
 }
