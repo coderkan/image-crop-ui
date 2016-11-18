@@ -1,6 +1,7 @@
 package cheetatech.ucropcustomui.fileutil;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -26,6 +27,26 @@ import cheetatech.ucropcustomui.controllers.Side;
 
 public class FileUtilz {
 
+
+
+    public static void save(File pictureFile,Bitmap bitmap)
+    {
+        if(!pictureFile.exists())
+        {
+            Log.e("TAG","File Does Not Exist...");
+        }
+        try{
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
+            fos.flush();
+            fos.close();
+        }catch (FileNotFoundException e){
+            Log.e("TAG","Error File not found " + e.getMessage());
+        }catch (IOException e){
+            Log.e("TAG","Error accessing file "+ e.getMessage());
+        }
+        Log.e("TAG","Path is "+ pictureFile.toString());
+    }
 
     public static void copyFiles(File src,File dst){
         FileInputStream inStream = null;

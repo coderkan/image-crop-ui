@@ -10,6 +10,7 @@ public class Side {
 
 
     public static String CUBE1 = "Cube1";
+    public static String CUBE2 = "Cube2";
     public static String BACKGROUND = "BackgroundImages";
     public static String CUBESIDES = "CubeSides";
     public static String BACKGROUNDPATH = ChangeBackground.cubeBackgroundPath;
@@ -32,5 +33,6 @@ public class Side {
             "cube_side_top.jpg",
             "cube_side_bottom.jpg"
     };
+
 
 }

@@ -54,6 +54,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
 
 
+    private String cubeString = Side.CUBE1;
+
     @BindView(R.id.iconOk) ImageView iconOk;
     @BindView(R.id.fabCamera) ImageView fabCamera;
     @BindView(R.id.fabGallery) ImageView fabGallery;
@@ -104,14 +106,12 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         Log.e(TAG,"LoadElements");
         presenter.init();
-        presenter.loadBackground();
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        Log.e(TAG,"OnResumeeee");
         presenter.loadBackground();
     }
 
@@ -154,82 +154,45 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         }else{
 
             File selectedFile = presenter.getCurrentFile();
-            Log.e(TAG,"SelectedFile Path "+selectedFile.getAbsolutePath().toString());
             if(selectedFile.exists()){
-                File pictureFile = FileUtilz.getOutMediaFile( getApplicationContext(),FileUtilz.accomplish(Side.CUBE1,cubeBackgroundPath));
-                Log.e(TAG,"SelectedFile Path "+pictureFile.getAbsolutePath().toString());
+                File pictureFile = FileUtilz.getOutMediaFile( getApplicationContext(),FileUtilz.accomplish(this.cubeString,cubeBackgroundPath));
                 if(pictureFile.exists()) {
                     try{
-                        FileUtilz.copyFileToDestination(getApplicationContext(),
-                                FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND),
-                                FileUtilz.accomplish(Side.CUBE1,Side.BACKGROUNDPATH)
-                        );
-//                        final FileOutputStream fos = new FileOutputStream(pictureFile);
-//                        Picasso.with(getApplicationContext()).load(selectedFile).into(new Target() {
-//                            @Override
-//                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                                bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
-//                                try {
-//                                    fos.flush();
-//                                    fos.close();
-//                                } catch (IOException e) {
-//                                    e.printStackTrace();
-//                                }
-//                                Log.e(TAG,"imge yazıldı...");
-//
-//                            }
-//
-//                            @Override
-//                            public void onBitmapFailed(Drawable errorDrawable) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-//
-//                            }
-//                        });
-//                        bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
-//                        fos.flush();
-//                        fos.close();
+                        if(selectedFile.getAbsolutePath().toString() == pictureFile.getAbsolutePath().toString()){
+                            Log.e(TAG,"Dosyalar eşit");
+                            return;
+                        }
+                        Log.e(TAG,"DOSYALAR1 "+ selectedFile.getAbsolutePath());
+                        Log.e(TAG,"DOSYALAR2 "+ pictureFile.getAbsolutePath());
+                        final FileOutputStream fos = new FileOutputStream(pictureFile);
+                        Picasso.with(getApplicationContext()).load(selectedFile).into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
+                                try {
+                                    fos.flush();
+                                    fos.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            }
+                        });
                     }catch (FileNotFoundException e){
-                        Log.e(TAG,"Error File not found " + e.getMessage());
+                        e.printStackTrace();
                     }catch (IOException e){
-                        Log.e(TAG,"Error accessing file "+ e.getMessage());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Log.e(TAG,"Path is "+ pictureFile.toString());
                 }
             }
-
-
-
-
-
-//            Bitmap bitmap = presenter.getCurrentBitmap();
-//            File pictureFile = FileUtilz.getOutputMediaFile( getApplicationContext(),FileUtilz.accomplish(Side.CUBE1,cubeBackgroundPath));
-//            if(!pictureFile.exists())
-//            {
-//
-////
-////                Log.e(TAG,"Error creating media file , check permissions...");
-////                pictureFile = FileUtilz.getOutputMediaFileAndCreate(getApplicationContext(),cubeBackgroundPath);
-////                if(pictureFile == null)
-////                    return;
-//            }
-//            try{
-//                FileOutputStream fos = new FileOutputStream(pictureFile);
-//                bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
-//                fos.flush();
-//                fos.close();
-//            }catch (FileNotFoundException e){
-//                Log.e(TAG,"Error File not found " + e.getMessage());
-//            }catch (IOException e){
-//                Log.e(TAG,"Error accessing file "+ e.getMessage());
-//            }
-//
-//            Log.e(TAG,"Path is "+ pictureFile.toString());
         }
     }
 
@@ -249,7 +212,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(Intent.createChooser(intent,getString(R.string.label_select_picture)),REQUEST_SELECT_PICTURE);
         }
-
     }
 
 
@@ -453,11 +415,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     }
 
     private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
-        String downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        String filename = String.format("%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
-
-        String npath = FileUtilz.accomplish(Side.CUBE1,Side.REF_BACKGROUND/*ChangeBackground.cubeBackgroundPath*/);
-        File saveFile = FileUtilz.getOutputMediaFile(getApplicationContext(), npath); //new File(downloadsDirectoryPath, filename);
+        String npath = FileUtilz.accomplish(this.cubeString,Side.REF_BACKGROUND);
+        File saveFile = FileUtilz.getOutMediaFile(getApplicationContext(), npath);
 
         FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
         FileOutputStream outStream = new FileOutputStream(saveFile);
@@ -470,6 +429,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
         File file = new File(croppedFileUri.getPath());
         if(file != null)
             file.delete();
+        presenter.setCurrentFile(saveFile);
         presenter.loadBackground();
     }
 

@@ -9,8 +9,11 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cheetatech.ucropcustomui.controllers.Side;
 import cheetatech.ucropcustomui.decision.Desc;
 import cheetatech.ucropcustomui.decision.FileDesc;
+import cheetatech.ucropcustomui.fileutil.DirectoryControl;
+import cheetatech.ucropcustomui.fileutil.DirectoryType;
 
 public class MainSelectActivity extends AppCompatActivity {
 
@@ -29,6 +32,19 @@ public class MainSelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_select);
         ButterKnife.bind(this);
+        loadDirectories();
+    }
+
+    private void loadDirectories() {
+        DirectoryType[] types = new DirectoryType[]{
+                new DirectoryType(Side.CUBE1,Desc.CUBESIDE),
+                new DirectoryType(Side.CUBE2,Desc.CUBESIDE),
+                new DirectoryType(Side.BACKGROUND,Desc.BACKGROUND),
+        };
+        DirectoryControl dir = new DirectoryControl(getApplicationContext(),types);
+
+
+
     }
 
     @OnClick(R.id.button_background) void backgroundStore(){

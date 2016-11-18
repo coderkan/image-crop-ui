@@ -49,36 +49,48 @@ public class BackgroundPresenter {
     }
 
 
+    // Ok
     public void init(){
 
         List<File> files = imageController.getAllGalleryFileList(Side.BACKGROUND);
 
-        if(files.size() > 0){
+        if(files.size() >= 0){
             this.imageModels.clear();
             int i = 0;
             for (File file:files
                  ) {
                 imageModels.add(imageController.getImageModel(file));
-                Log.e("TAG","Bitmaps " + imageModels.get(i++).getIndex());
             }
-            try {
-                FileUtilz.copyFileToDestination(this.context,
-                        FileUtilz.accomplish(this.directory,Side.BACKGROUNDPATH),
-                        FileUtilz.accomplish(this.directory,Side.REF_BACKGROUND)
-                );
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            File background = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(Side.BACKGROUND,"first.jpg"));
+            if(files.size() == 0){
 
-            try { // copy background to reference
-                copyBackgroundToRef(this.directory);
-            } catch (Exception e) {
-                e.printStackTrace();
+                Bitmap bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg3);
+                FileUtilz.save(background,bitmap);
+                background = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(this.directory,Side.BACKGROUNDPATH));
+                if(background.exists()){
+                    imageModels.add(imageController.getImageModel(background));
+                }
             }
+            File backgroundFile = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(this.directory,Side.BACKGROUNDPATH));
+            if(backgroundFile.exists()){
+                this.currentFile = backgroundFile;
+                this.view.onLoadBackgroundImage(this.currentFile);
+                Log.e("TAG","XXXXXXX");
+            }else{
+                Bitmap bitmap = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1);
+                FileUtilz.save(backgroundFile,bitmap);
+                backgroundFile = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(this.directory,Side.BACKGROUNDPATH));
+                if(backgroundFile.exists()){
+                    this.currentFile = backgroundFile;
+                    this.view.onLoadBackgroundImage(this.currentFile);
+                    Log.e("TAG","YYYYYYY");
+                }
+            }
+            if(this.currentFile != null)
+                Log.e("TAG","Current File "+ this.currentFile.getAbsolutePath());
             this.view.onLoadGalleryViews(imageModels);
             this.view.onSetClickListeners(imageModels);
         }
-
     }
 
     // Copy background image to ref
@@ -89,24 +101,16 @@ public class BackgroundPresenter {
         FileUtilz.copyFileToDestination(this.context,backgroundPath,referencePath);
     }
     public void loadBackground() {
-        String referencePath = FileUtilz.accomplish(this.directory,Side.REF_BACKGROUND);
-        File file = FileUtilz.getOutMediaFile(this.context,referencePath);
-        if(file.exists()){
-            this.view.onLoadBackgroundImage(file);
-        }else{
-            Log.e("TAG","Reference File does not exists");
-        }
-        Log.e("TAG","Ref Path is " +file.getAbsolutePath().toString());
+        if(this.currentFile == null)
+            return;
+        if(this.currentFile.exists())
+            this.view.onLoadBackgroundImage(this.currentFile);
+        Log.e("TAG","PathPathPath is " +this.currentFile.getAbsolutePath().toString());
     }
 
     public void setSelectedImageModel(ImageModel selectedImageModel) {
-        //this.currentBitmap = selectedImageModel.getBitmap();
         this.currentFile = selectedImageModel.getFile();
-        try {
-            FileUtilz.copyFiles(this.context,this.currentFile,FileUtilz.accomplish(this.directory,Side.BACKGROUNDPATH));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Log.e("TAG","Erkannn "+ this.currentFile.getAbsolutePath().toString());
         this.view.onLoadBackgroundImage(this.currentFile);
     }
     public Bitmap getCurrentBitmap(){
@@ -117,10 +121,7 @@ public class BackgroundPresenter {
     }
 
     public File getCurrentFile(){
-        FileUtilz.directoryControl(this.context,this.directory);
-        String referencePath = FileUtilz.accomplish(this.directory,Side.REF_BACKGROUND);
-        File current = FileUtilz.getOutMediaFile(this.context,referencePath);
-        return current;
+        return this.currentFile;
     }
 
     public void setCurrentFile(File file){
