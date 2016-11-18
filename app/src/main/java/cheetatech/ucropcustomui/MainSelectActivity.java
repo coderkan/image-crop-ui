@@ -12,6 +12,7 @@ import butterknife.OnClick;
 import cheetatech.ucropcustomui.controllers.Side;
 import cheetatech.ucropcustomui.decision.Desc;
 import cheetatech.ucropcustomui.decision.FileDesc;
+import cheetatech.ucropcustomui.fileutil.DirString;
 import cheetatech.ucropcustomui.fileutil.DirectoryControl;
 import cheetatech.ucropcustomui.fileutil.DirectoryType;
 
@@ -54,6 +55,7 @@ public class MainSelectActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.button_background_image) void backgroundImage(){
+        DirString.getInstance().setString(Side.CUBE1);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

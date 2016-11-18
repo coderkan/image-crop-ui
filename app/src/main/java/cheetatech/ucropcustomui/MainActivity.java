@@ -17,6 +17,10 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,6 +30,7 @@ import cheetatech.ucropcustomui.decision.Desc;
 import cheetatech.ucropcustomui.decision.FileDesc;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
 import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
+import cheetatech.ucropcustomui.fileutil.DirString;
 import cheetatech.ucropcustomui.mainactivities.MainPresenter;
 import cheetatech.ucropcustomui.mainactivities.MainView;
 
@@ -54,19 +59,17 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
         ButterKnife.bind(this);
 
         views = new ImageView[]{frontImView,backImView,leftImView,rightImView,topImView,bottomImView};
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         if(presenter == null)
-            presenter = new MainPresenter(getApplicationContext(),this);
+            presenter = new MainPresenter(getApplicationContext(),this, DirString.getInstance().getString());
 
         eCoinLib eCoin = new eCoinLib(getApplicationContext(),this);
         //eCoin.removeCoin(700);
         //eCoin.addCoin(380);
-
-
-
         loadElements();
-
     }
 
     @Override
@@ -80,8 +83,6 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
     private void loadElements()
     {
         loadImages();
-        //presenter.loadBackground();
-        //presenter.loadCubeImages();
     }
 
 
@@ -93,7 +94,6 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
                     getString(R.string.permission_write_storage_rationale),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else{
-            //imageController.saveCubeSidesImage();
             presenter.loadBackground();
             presenter.loadCubeImages();
         }
@@ -125,73 +125,34 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
-
     @OnClick(R.id.backgroundIconChange) void clickBackgroundImageChange(){
-
-//        FileDesc.getInstance().setDesc(Desc.BACKGROUND);
-//        Toast.makeText(getApplicationContext(),"click Apply Icon",Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(this, ImageLoadActivity.class);
-//        startActivity(intent);
-
 
         Toast.makeText(getApplicationContext(),"click Apply Icon",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, ChangeBackground.class);
         startActivity(intent);
 
-
     }
     @OnClick(R.id.cubeBackgroundChange) void clickCubeBackgroundImageChange(){
 
-//
-//        FileDesc.getInstance().setDesc(Desc.CUBESIDE);
-//        Toast.makeText(getApplicationContext(),"click Background Icon",Toast.LENGTH_SHORT).show();
-//        startActivity(new Intent(this, CardActivity.class));
-
         Toast.makeText(getApplicationContext(),"click Background Icon",Toast.LENGTH_SHORT).show();
-        //startActivity(new Intent(this, BackgroundActivity.class));
         startActivity(new Intent(this, ChangeCube.class));
+
+    }
+
+
+    @Override
+    public void onLoadBackground(File file) {
+        Picasso.with(getApplicationContext()).load(file).into(backgroundImView);
     }
 
     @Override
-    public void onLoadBackground(Bitmap bitmap) {
-
-        backgroundImView.setImageBitmap(bitmap);
+    public void onLoadCubeSides(File[] files) {
+        for(int i = 0; i < this.views.length; i++){
+            Picasso.with(getApplicationContext()).load(files[i]).into(this.views[i]);
+        }
     }
 
-    @Override
-    public void onLoadCubeSides(Bitmap[] bitmaps) {
-        for(int i = 0; i < this.views.length; i++)
-            this.views[i].setImageBitmap(bitmaps[i]);
-    }
 
-    @Override
-    public void onLoadCubeSide(Bitmap bitmap) {
-
-    }
 
     @Override
     public void onNeedMoreCoin() {

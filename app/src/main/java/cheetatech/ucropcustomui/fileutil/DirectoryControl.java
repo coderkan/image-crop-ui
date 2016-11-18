@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 import cheetatech.ucropcustomui.R;
-import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.decision.Desc;
-import cheetatech.ucropcustomui.ecoinlib.CoinType;
 
 /**
  * Created by erkan on 18.11.2016.

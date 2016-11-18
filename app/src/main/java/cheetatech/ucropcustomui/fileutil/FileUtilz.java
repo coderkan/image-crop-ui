@@ -125,7 +125,7 @@ public class FileUtilz {
                 + "/Files");
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
-                return null;
+                //return null;
             }
         }
         return mediaStorageDir;
