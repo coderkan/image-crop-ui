@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.PortUnreachableException;
@@ -26,6 +27,23 @@ import cheetatech.ucropcustomui.controllers.Side;
 public class FileUtilz {
 
 
+    public static void copyFiles(File src,File dst){
+        FileInputStream inStream = null;
+        FileOutputStream outStream = null;
+        try {
+            inStream = new FileInputStream(src);
+            outStream = new FileOutputStream(dst);
+            FileChannel inChannel = inStream.getChannel();
+            FileChannel outChannel = outStream.getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+            inStream.close();
+            outStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -43,6 +61,18 @@ public class FileUtilz {
         outStream.close();
     }
 
+    public static void copyFiles(Context context,File src,String dest) throws Exception {
+        File srcFile = src;// FileUtilz.getOutMediaFile(context, src); //new File(downloadsDirectoryPath, filename);
+        File dstFile = FileUtilz.getOutMediaFile(context, dest); //new File(downloadsDirectoryPath, filename);
+
+        FileInputStream inStream = new FileInputStream(srcFile);
+        FileOutputStream outStream = new FileOutputStream(dstFile);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+    }
 
 
 
