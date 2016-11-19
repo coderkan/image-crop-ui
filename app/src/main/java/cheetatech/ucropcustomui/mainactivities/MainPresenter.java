@@ -36,9 +36,12 @@ public class MainPresenter {
     {
         File file = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(this.directory,Side.BACKGROUNDPATH));
         if(!file.exists()){
+            Log.e("TAG","LoadBackground is Not Exist");
             Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), R.drawable.bg1);
             save(file,bitmap_);
-        }
+        }else
+            Log.e("TAG","LoadBackground is Existtttt");
+        Log.e("TAG","LoadBackground filepath "+file.getAbsolutePath().toString());
         this.view.onLoadBackground(file);
     }
 

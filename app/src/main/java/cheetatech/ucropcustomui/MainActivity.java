@@ -1,9 +1,15 @@
 package cheetatech.ucropcustomui;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +23,10 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.MediaStoreSignature;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -26,13 +36,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.controllers.ImageController;
+import cheetatech.ucropcustomui.controllers.Side;
 import cheetatech.ucropcustomui.decision.Desc;
 import cheetatech.ucropcustomui.decision.FileDesc;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
 import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
 import cheetatech.ucropcustomui.fileutil.DirString;
+import cheetatech.ucropcustomui.fileutil.FileUtilz;
 import cheetatech.ucropcustomui.mainactivities.MainPresenter;
 import cheetatech.ucropcustomui.mainactivities.MainView;
+
+import static cheetatech.ucropcustomui.fileutil.FileUtilz.save;
 
 public class MainActivity extends BaseActivity implements MainView,OnCoinLibListener{
 
@@ -46,6 +60,7 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
     @BindView(R.id.bottomImView) ImageView bottomImView;
     @BindView(R.id.backgroundImView) ImageView backgroundImView;
 
+    public int i = 0;
     private ImageView[] views = null;
 
 
@@ -142,8 +157,37 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
 
     @Override
     public void onLoadBackground(File file) {
-        Picasso.with(getApplicationContext()).load(file).resize(270,480).into(backgroundImView);
+        Picasso.with(getApplicationContext()).load(file)
+                .resize(270,480)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .into(backgroundImView);
+
+        //Glide.with(this).load(files).signature(new MediaStoreSignature("mimeType",100+i,1+i)).override(270,480).into(backgroundImView);
     }
+    public static Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[] { filePath }, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
+    }
+
 
     @Override
     public void onLoadCubeSides(File[] files) {

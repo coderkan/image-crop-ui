@@ -3,8 +3,11 @@ package cheetatech.ucropcustomui;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -23,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.yalantis.ucrop.UCrop;
@@ -74,12 +79,7 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private Uri mUri = null;
     public static String cubeBackgroundPath = "cube_background.jpg";
 
-
-
-
     private static final int DOWNLOAD_NOTIFICATION_ID_DONE = 911;
-
-
 
 
     private BackgroundPresenter presenter = null;
@@ -104,7 +104,6 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     private void loadElements()
     {
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        Log.e(TAG,"LoadElements");
         presenter.init();
     }
 
@@ -152,46 +151,21 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
                     getString(R.string.permission_write_storage_rationale),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else{
-
             File selectedFile = presenter.getCurrentFile();
             if(selectedFile.exists()){
                 File pictureFile = FileUtilz.getOutMediaFile( getApplicationContext(),FileUtilz.accomplish(this.cubeString,cubeBackgroundPath));
                 if(pictureFile.exists()) {
-                    try{
-                        if(selectedFile.getAbsolutePath().toString() == pictureFile.getAbsolutePath().toString()){
-                            Log.e(TAG,"Dosyalar eşit");
-                            return;
-                        }
-                        Log.e(TAG,"DOSYALAR1 "+ selectedFile.getAbsolutePath());
-                        Log.e(TAG,"DOSYALAR2 "+ pictureFile.getAbsolutePath());
-                        final FileOutputStream fos = new FileOutputStream(pictureFile);
-                        Picasso.with(getApplicationContext()).load(selectedFile).into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                bitmap.compress(Bitmap.CompressFormat.JPEG,90,fos);
-                                try {
-                                    fos.flush();
-                                    fos.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+                    try {
+                        if (pictureFile.exists())
+                            pictureFile.delete();
 
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            }
-                        });
-                    }catch (FileNotFoundException e){
-                        e.printStackTrace();
-                    }catch (IOException e){
-                    } catch (Exception e) {
+                        FileUtilz.copyFiles(selectedFile, pictureFile);
+                    }catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+            }else{
+                Log.e(TAG,"Not Exist File ");
             }
         }
     }
@@ -460,6 +434,33 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onLoadBackgroundImage(File file) {
-        Picasso.with(getApplicationContext()).load(file).resize(270,480).into(backgroundImageView);
+
+        Picasso.with(getApplicationContext()).load(file).resize(270,480)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .into(backgroundImageView);
+    }
+
+    public static Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[] { filePath }, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
     }
 }

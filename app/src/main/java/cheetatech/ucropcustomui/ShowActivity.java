@@ -18,6 +18,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cheetatech.ucropcustomui.activitys.BaseActivity;
 import cheetatech.ucropcustomui.ads.OnAdsListener;
+import cheetatech.ucropcustomui.decision.Desc;
+import cheetatech.ucropcustomui.decision.FileDesc;
 import cheetatech.ucropcustomui.dialogs.DialogBuilder;
 import cheetatech.ucropcustomui.ecoinlib.OnCoinLibListener;
 import cheetatech.ucropcustomui.ecoinlib.eCoinLib;
@@ -77,7 +79,10 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
 
     @Override
     public void onPreviewImage(String url) {
-        Picasso.with(this).load(url).resize(270,480).into(previewImageView);
+        if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND)
+            Picasso.with(this).load(url).resize(270,480).into(previewImageView);
+        else
+            Picasso.with(this).load(url).resize(300,300).into(previewImageView);
     }
 
     @Override
