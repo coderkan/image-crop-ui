@@ -34,6 +34,16 @@ public class DirectoryControl {
             "cube_side_top.jpg",
             "cube_side_bottom.jpg"
     };
+    public static String[] cubeGalleryNames = new String[]{
+            "c1.jpg",
+            "c2.jpg",
+            "c3.jpg",
+            "c4.jpg",
+            "c5.jpg",
+            "c6.jpg"
+    };
+
+
     private String cubeBackground = "cube_background.jpg";
 
 
@@ -77,6 +87,18 @@ public class DirectoryControl {
 
                         file = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(type.getName(),cubeSidePath[i]));
                         bitmap = BitmapFactory.decodeResource(this.context.getResources(), cubeImages[i]);
+                        save(file,bitmap);
+                    }
+                }
+            }else
+                Log.e(TAG,"Error when loading directory "+ type.getName());
+        }
+        if(type.getDesc() == Desc.CUBEBACKGROUND){
+            if(FileUtilz.directoryControl(this.context,type.getName())){
+                if(getList(type.getName()).size() == 0){
+                    for(int i = 0; i < 6 ;i++){
+                        File file = FileUtilz.getOutMediaFile(this.context,FileUtilz.accomplish(type.getName(),cubeGalleryNames[i]));
+                        Bitmap bitmap = BitmapFactory.decodeResource(this.context.getResources(), cubeImages[i]);
                         save(file,bitmap);
                     }
                 }

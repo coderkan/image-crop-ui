@@ -28,6 +28,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -112,7 +115,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         ButterKnife.bind(this);
 
         if(presenter == null)
-            presenter = new ChangeCubePresenter(getApplicationContext(),this);
+            presenter = new ChangeCubePresenter(getApplicationContext(),this,Side.CUBE1);
 
         cubeSides = new ImageView[]{ front,back,left,right,top,bottom };
 
@@ -120,19 +123,14 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        loadElements();
         loadGallery();
     }
 
-    private void loadElements()
-    {
-        presenter.loadElements();
-        presenter.loadCubeSideImages();
-    }
+
 
     private void loadGallery()
     {
-
+        presenter.loadCubeSideImages();
         backgroundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         getIndexAndToggle(R.id.frontToggleButton);
         presenter.setCurrentIndex(0);
@@ -467,25 +465,47 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
     @Override
     public void onLoadBackgroundImage(Bitmap bitmap) {
+
+
         backgroundImageView.setImageBitmap(bitmap);
+
     }
 
     @Override
     public void onLoadBackgroundImage(File file) {
+        Picasso.with(getApplicationContext())
+                .load(file)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .resize(250,250)
+                .into(backgroundImageView);
+    }
 
+
+
+
+
+    @Override
+    public void onLoadCubeSideBitmap(int side, File file) {
+        Picasso.with(getApplicationContext())
+                .load(file)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .resize(150,150)
+                .into(this.cubeSides[side]);
     }
 
     @Override
-    public void onLoadCubeSideBitmap(int side, Bitmap bitmap) {
-        this.cubeSides[side].setImageBitmap(bitmap);
-    }
-
-    @Override
-    public void onLoadCubeSides(Bitmap[] bitmaps) {
+    public void onLoadCubeSides(File[] files) {
         int i = 0;
         for (ImageView imageView: cubeSides
-             ) {
-            imageView.setImageBitmap(bitmaps[i++]);
+                ) {
+            Picasso.with(getApplicationContext())
+                    .load(files[i++])
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .resize(150,150)
+                    .into(imageView);
         }
     }
 

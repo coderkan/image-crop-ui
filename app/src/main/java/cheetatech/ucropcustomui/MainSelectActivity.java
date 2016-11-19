@@ -41,6 +41,7 @@ public class MainSelectActivity extends AppCompatActivity {
                 new DirectoryType(Side.CUBE1,Desc.CUBESIDE),
                 new DirectoryType(Side.CUBE2,Desc.CUBESIDE),
                 new DirectoryType(Side.BACKGROUND,Desc.BACKGROUND),
+                new DirectoryType(Side.CUBEGALLERY,Desc.CUBEBACKGROUND)
         };
         DirectoryControl dir = new DirectoryControl(getApplicationContext(),types);
 

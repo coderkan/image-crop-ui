@@ -70,7 +70,7 @@ public class ShowPresenter {
             }
         }
         else{
-            if(FileUtilz.isFileInRoot(this.context,Side.CUBESIDES,fname)){
+            if(FileUtilz.isFileInRoot(this.context,Side.CUBEGALLERY,fname)){
                 this.view.onChangeFabButtonDisable();
                 setState(true);
             }else{
@@ -124,7 +124,7 @@ public class ShowPresenter {
             }
         }
         else{
-            if(FileUtilz.isFileInRoot(this.context,Side.CUBESIDES,fname)){
+            if(FileUtilz.isFileInRoot(this.context,Side.CUBEGALLERY,fname)){
                 this.view.onAlreadyDownload(fname);
                 return;
             }
@@ -152,7 +152,7 @@ public class ShowPresenter {
         if(FileDesc.getInstance().getDesc() == Desc.BACKGROUND)
             path = Side.BACKGROUND + File.separator + this.model.getFileName();
         else
-            path = Side.CUBESIDES + File.separator + this.model.getFileName();
+            path = Side.CUBEGALLERY + File.separator + this.model.getFileName();
 
         localFile = FileUtilz.getOutMediaFile(this.context,path);
         final File finalLocalFile = localFile;
@@ -184,8 +184,8 @@ public class ShowPresenter {
             }
         }
         if(FileDesc.getInstance().getDesc() == Desc.CUBESIDE){
-            if(FileUtilz.isFileInRoot(this.context,Side.CUBESIDES,fname)){
-                path = Side.CUBESIDES + File.separator + this.model.getFileName();
+            if(FileUtilz.isFileInRoot(this.context,Side.CUBEGALLERY,fname)){
+                path = Side.CUBEGALLERY + File.separator + this.model.getFileName();
             }
         }
         if(path != ""){

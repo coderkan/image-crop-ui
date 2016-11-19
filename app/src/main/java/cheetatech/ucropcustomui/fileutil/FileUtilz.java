@@ -95,7 +95,18 @@ public class FileUtilz {
         outStream.close();
     }
 
+    public static void copyFiles(Context context,File src,File dest) throws Exception {
+        File srcFile = src;// FileUtilz.getOutMediaFile(context, src); //new File(downloadsDirectoryPath, filename);
+        File dstFile = dest;//FileUtilz.getOutMediaFile(context, dest); //new File(downloadsDirectoryPath, filename);
 
+        FileInputStream inStream = new FileInputStream(srcFile);
+        FileOutputStream outStream = new FileOutputStream(dstFile);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
+    }
 
     public static String accomplish(String s1, String s2){
         return s1 + File.separator + s2;

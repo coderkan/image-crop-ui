@@ -192,7 +192,12 @@ public class MainActivity extends BaseActivity implements MainView,OnCoinLibList
     @Override
     public void onLoadCubeSides(File[] files) {
         for(int i = 0; i < this.views.length; i++){
-            Picasso.with(getApplicationContext()).load(files[i]).resize(150,150).into(this.views[i]);
+            Picasso.with(getApplicationContext())
+                    .load(files[i])
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .resize(150,150)
+                    .into(this.views[i]);
         }
     }
 

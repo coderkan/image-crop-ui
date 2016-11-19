@@ -6,5 +6,6 @@ package cheetatech.ucropcustomui.decision;
 
 public enum Desc {
     BACKGROUND,
-    CUBESIDE
+    CUBESIDE,
+    CUBEBACKGROUND
 }

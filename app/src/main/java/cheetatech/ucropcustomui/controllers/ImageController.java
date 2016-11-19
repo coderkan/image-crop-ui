@@ -296,6 +296,26 @@ public class ImageController {
     }
 
 
+    // MainActivity
+    public File[] getCubeSidesFile(String root)
+    {
+        File[] files = new File[6];
+        for(int i = 0; i < 6; i++){
+            String path = Side.cubeSidePath[i];
+            String picPath = FileUtilz.accomplish(root,path);
+            File pictureFile = FileUtilz.getOutMediaFile(context, picPath);
+            if(!pictureFile.exists())
+            {
+                int[] ints = new int[]{R.drawable.im1,R.drawable.im2,R.drawable.im3,R.drawable.im4,R.drawable.im5,R.drawable.im6};
+                Bitmap bitmap_ = BitmapFactory.decodeResource(this.context.getResources(), ints[i%6]);
+                save(pictureFile,bitmap_);
+            }
+            File file = FileUtilz.getOutMediaFile(context,picPath);
+            files[i] = file;
+        }
+        return files;
+    }
+
     public List<File> getAllGalleryFileList(String rootPath)
     {
         FileUtilz.directoryControl(this.context,rootPath);
@@ -618,6 +638,27 @@ public class ImageController {
     }
 
 
+
+    // Cubesides save method
+    public void saveCubeSides(File[] files,String root)
+    {
+        for(int i = 0; i < 6;i++) {
+            String path = Side.cubeSidePath[i];
+            String npath = FileUtilz.accomplish(root, path);
+
+            File pictureFile = FileUtilz.getOutputMediaFile(this.context.getApplicationContext(), npath);
+            if (files[i].compareTo(pictureFile) == 0) {
+                continue;
+            }
+            try {
+                FileUtilz.copyFiles(this.context, files[i], pictureFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Cubesides save method
     public void saveCubeSidesImage(ImageView[] cubeSideImageViews)
     {
         for(int i = 0; i < 6;i++)

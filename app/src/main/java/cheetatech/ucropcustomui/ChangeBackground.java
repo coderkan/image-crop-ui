@@ -200,10 +200,8 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
 
         }else{
             // Camera intent
-
             Intent takePictureIntent = new Intent();
             takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-
 
             File photoFile = null;
             try{
@@ -435,10 +433,13 @@ public class ChangeBackground extends BaseActivity implements View.OnClickListen
     @Override
     public void onLoadBackgroundImage(File file) {
 
-        Picasso.with(getApplicationContext()).load(file).resize(270,480)
+        Picasso.with(getApplicationContext())
+                .load(file)
+                .resize(270,480)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .into(backgroundImageView);
+
     }
 
     public static Uri getImageContentUri(Context context, File imageFile) {
