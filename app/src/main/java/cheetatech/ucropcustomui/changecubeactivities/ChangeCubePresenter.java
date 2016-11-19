@@ -107,6 +107,14 @@ public class ChangeCubePresenter {
         controller.saveCubeSides(this.baseCube.getFiles(),this.directory);
         this.view.onSavedImage();
     }
+    public File getCurrentFile(){
+        return this.currentFile;
+    }
+
+    public void setCurrentFile(File file){
+        this.currentFile = file;
+        this.view.onLoadBackgroundImage(file);
+    }
 
     public void loadCroppedImageFromCamera() {
 //        Bitmap bitmap = controller.getBitmap(BaseActivity.CUBESIDE_BACKGROUND_IMAGE_NAME,512,512,1);

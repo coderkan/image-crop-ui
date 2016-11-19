@@ -97,7 +97,7 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
     private ArrayList<ImageModel> models = new ArrayList<ImageModel>();
 
 
-
+    private String activeDirectory;
 
     private GalleryController controller = null;
     private ArrayList<Integer> idList = new ArrayList<Integer>();
@@ -114,8 +114,10 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         setContentView(R.layout.activity_change_cube);
         ButterKnife.bind(this);
 
+        this.activeDirectory = Side.CUBE1;
+
         if(presenter == null)
-            presenter = new ChangeCubePresenter(getApplicationContext(),this,Side.CUBE1);
+            presenter = new ChangeCubePresenter(getApplicationContext(),this,this.activeDirectory);
 
         cubeSides = new ImageView[]{ front,back,left,right,top,bottom };
 
@@ -404,7 +406,9 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
 
     private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
 
-        File saveFile = FileUtilz.getOutMediaFile(getApplicationContext(), CUBESIDE_BACKGROUND_IMAGE_NAME); //new File(downloadsDirectoryPath, filename);
+        String npath = FileUtilz.accomplish(this.activeDirectory,Side.REF_CUBESIDE);
+        File saveFile = FileUtilz.getOutMediaFile(getApplicationContext(), npath);
+
 
         FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
         FileOutputStream outStream = new FileOutputStream(saveFile);
@@ -417,6 +421,10 @@ public class ChangeCube extends BaseActivity implements View.OnClickListener , C
         File file = new File(croppedFileUri.getPath());
         if(file != null)
             file.delete();
+
+        presenter.setCurrentFile(saveFile);
+
+
     }
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")

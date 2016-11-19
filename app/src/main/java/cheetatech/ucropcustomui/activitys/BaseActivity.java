@@ -24,6 +24,8 @@ public class BaseActivity extends AppCompatActivity {
     public static final String SAMPLE_CROPPED_BACKGROUND_IMAGE_NAME = "SampleCropBackgroundImage";
     public static final String SAMPLE_CROPPED_CUBESIDE_IMAGE_NAME = "SampleCropCubeSideImage.jpg";
     public static final String CUBESIDE_BACKGROUND_IMAGE_NAME = "cube_side_background.jpg";
+
+
     private AlertDialog mAlertDialog;
 
     /**
