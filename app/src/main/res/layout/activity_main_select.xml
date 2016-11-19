@@ -43,4 +43,12 @@
         android:textAllCaps="false"
         android:layout_below="@+id/button_background_image"
         />
+    <Button
+        android:id="@+id/button_merge_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Merge Image"
+        android:textAllCaps="false"
+        android:layout_below="@+id/button_cubeside_image"
+        />
 </RelativeLayout>

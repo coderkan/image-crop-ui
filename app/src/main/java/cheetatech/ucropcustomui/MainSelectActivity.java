@@ -27,6 +27,8 @@ public class MainSelectActivity extends AppCompatActivity {
     Button cubeSideStore;
     @BindView(R.id.button_cubeside_image)
     Button cubeSideImage;
+    @BindView(R.id.button_merge_image)
+    Button mergeImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,5 +69,9 @@ public class MainSelectActivity extends AppCompatActivity {
     }
     @OnClick(R.id.button_cubeside_image) void cubeSideImage(){
 
+    }
+    @OnClick(R.id.button_merge_image) void mergeImage(){
+        Intent intent = new Intent(this, MergeActivity.class);
+        startActivity(intent);
     }
 }
