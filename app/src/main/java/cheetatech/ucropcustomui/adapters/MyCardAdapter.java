@@ -68,7 +68,7 @@ public class MyCardAdapter extends RecyclerView.Adapter<MyCardAdapter.ViewHolder
         final String name = mDataset.get(position);
 
         if(context != null)
-            Picasso.with(context).load(mDataset.get(position)).into(holder.imageView);
+            Picasso.with(context).load(mDataset.get(position)).resize(300,300).into(holder.imageView);
     }
 
     @Override

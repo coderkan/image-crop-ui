@@ -426,7 +426,7 @@ public class ImageController {
         imageView.setLayoutParams(new LinearLayout.LayoutParams(220,220));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         //imageView.setImageBitmap(bitmap);
-        Picasso.with(this.context).load(file).into(imageView);
+        Picasso.with(this.context).load(file).resize(270,480).into(imageView);
 
         int uniqueId = ViewIdGenerator.generateViewId();
         imageView.setId(uniqueId);

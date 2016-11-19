@@ -77,7 +77,7 @@ public class ShowActivity extends BaseActivity implements ShowView ,OnCoinLibLis
 
     @Override
     public void onPreviewImage(String url) {
-        Picasso.with(this).load(url).into(previewImageView);
+        Picasso.with(this).load(url).resize(270,480).into(previewImageView);
     }
 
     @Override
